@@ -1,14 +1,13 @@
-// services/auth-jwt.js
 const HttpError = require("../utils/http-error");
 const bcrypt = require("bcryptjs");
-const db = require("../models"); // index que exporta { sequelize, User, ... }
-const { User } = db;
+const { Usuario, Rol } = require("../models");
 const { isValidEmail, isValidPassword } = require("../utils/validators");
 
-const register = async (req) => {
-  const { email, password, confirmPassword, name } = req.body;
+const DEFAULT_USER_ROLE_ID = 3;
 
-  // Validaciones
+const register = async (req) => {
+  const { email, password, confirmPassword, compraOnline = false } = req.body;
+
   if (!isValidEmail(email)) {
     throw new HttpError(400, "Email inválido").setErrors([
       { email: "El formato del email no es válido" },
@@ -22,8 +21,8 @@ const register = async (req) => {
   }
 
   if (!confirmPassword) {
-    throw new HttpError(400, "Falta la confirmación de contraseña").setErrors([
-      { confirmPassword: "Debe ingresar la confirmación de la contraseña" },
+    throw new HttpError(400, "Falta confirmación de contraseña").setErrors([
+      { confirmPassword: "Debe ingresar la confirmación" },
     ]);
   }
 
@@ -33,14 +32,7 @@ const register = async (req) => {
     ]);
   }
 
-  if (!name) {
-    throw new HttpError(400, "Falta el nombre").setErrors([
-      { name: "El campo nombre es requerido" },
-    ]);
-  }
-
-  // ¿Existe ya?
-  const exist = await User.findOne({ where: { email } });
+  const exist = await Usuario.findOne({ where: { email } });
   if (exist) {
     throw new HttpError(400, "Ya existe el usuario").setErrors([
       { email: "Este email ya está registrado" },
@@ -49,8 +41,12 @@ const register = async (req) => {
 
   const hashed = await bcrypt.hash(password, 10);
 
-  // create puede lanzar SequelizeUniqueConstraintError
-  await User.create({ email, password: hashed, name, role: 'user' });
+  await Usuario.create({
+    email,
+    password: hashed,
+    compraOnline: !!compraOnline,
+    idRol: DEFAULT_USER_ROLE_ID,
+  });
 };
 
 const login = async (req) => {
@@ -65,7 +61,13 @@ const login = async (req) => {
 
   const { signToken } = await import("../utils/jwt.mjs");
 
-  const user = await User.findOne({ where: { email } });
+  const user = await Usuario.findOne({
+    where: { email },
+    include: [
+      { model: Rol, as: "rol", attributes: ["idRol", "nombre", "tipo"] },
+    ],
+  });
+
   const valid = user ? await bcrypt.compare(password, user.password) : false;
 
   if (!user || !valid) {
@@ -74,25 +76,28 @@ const login = async (req) => {
     ]);
   }
 
-  // plano sin password
+  // Plano sin password
   const plain = user.get ? user.get({ plain: true }) : user.toJSON?.() || {};
   delete plain.password;
 
+  // Elegí qué campo del rol querés en el token/respuesta (tipo o nombre)
+  const roleInfo = user.rol
+    ? { idRol: user.rol.idRol, tipo: user.rol.tipo, nombre: user.rol.nombre }
+    : null;
+
   return {
     token: await signToken({
-      id: user.id,         // Sequelize usa id (no _id)
+      id: user.idUsuario, // ✅ tu PK real
       email: user.email,
-      role: user.role,
+      role: roleInfo?.tipo || null, // ej: 'administrador' | 'operario' | 'usuario'
     }),
     user: {
+      id: user.idUsuario,
       email: user.email,
-      role: user.role,
-      name: user.name,
+      role: roleInfo, // te dejo todo el objeto del rol
+      compraOnline: user.compraOnline,
     },
   };
 };
 
-module.exports = {
-  register,
-  login,
-};
+module.exports = { register, login };

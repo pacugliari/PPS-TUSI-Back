@@ -9,14 +9,14 @@ Actualmente incluye un módulo de **auth** con registro y login de usuarios, y e
 
 ## 🛠️ Tecnologías usadas
 
-* [Node.js](https://nodejs.org/) — entorno de ejecución.
-* [Express](https://expressjs.com/) — framework web.
-* [Sequelize](https://sequelize.org/) — ORM para MySQL.
-* [MySQL](https://www.mysql.com/) — base de datos relacional.
-* [bcryptjs](https://www.npmjs.com/package/bcryptjs) — hashing de contraseñas.
-* [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) — generación y validación de JWT.
-* [dotenv](https://www.npmjs.com/package/dotenv) — manejo de variables de entorno.
-* [nodemon](https://nodemon.io/) — reinicio automático en desarrollo.
+- [Node.js](https://nodejs.org/) — entorno de ejecución.
+- [Express](https://expressjs.com/) — framework web.
+- [Sequelize](https://sequelize.org/) — ORM para MySQL.
+- [MySQL](https://www.mysql.com/) — base de datos relacional.
+- [bcryptjs](https://www.npmjs.com/package/bcryptjs) — hashing de contraseñas.
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) — generación y validación de JWT.
+- [dotenv](https://www.npmjs.com/package/dotenv) — manejo de variables de entorno.
+- [nodemon](https://nodemon.io/) — reinicio automático en desarrollo.
 
 ---
 
@@ -155,29 +155,171 @@ Respuesta:
 
 ## 🗄️ Base de datos
 
-* Tabla principal: `usuarios`
-* Campos:
+- Tabla principal: `usuarios`
+- Campos:
 
-  * `id` (PK, autoincremental)
-  * `email` (string, único, requerido)
-  * `password` (string, hash con bcrypt)
-  * `role` (enum: `user` | `admin`, default `user`)
-  * `name` (string, requerido)
-  * `createdAt` / `updatedAt`
+  - `id` (PK, autoincremental)
+  - `email` (string, único, requerido)
+  - `password` (string, hash con bcrypt)
+  - `role` (enum: `user` | `admin`, default `user`)
+  - `name` (string, requerido)
+  - `createdAt` / `updatedAt`
 
 ---
 
 ## 🚦 Scripts disponibles
 
-* `npm run dev` → arranca con nodemon (hot reload).
-* `npm start` → arranca en modo producción.
+- `npm run dev` → arranca con nodemon (hot reload).
+- `npm start` → arranca en modo producción.
 
 ---
 
-## ✅ TODO / Próximos pasos
+total, no dupliquemos. Sumale **solo** esta sección al final del README, enfocada en _migraciones y seed_ (dejá intacta tu sección de instalación actual):
 
-* [ ] Agregar migraciones con `sequelize-cli`.
-* [ ] Documentación con Swagger/OpenAPI.
-* [ ] Roles y permisos avanzados.
+---
+
+## ▶️ Migrations & Seed (sequelize-cli)
+
+### 1) Preparación mínima del CLI
+
+Asegurate de tener estos dos archivos:
+
+**.sequelizerc**
+
+```js
+const path = require("path");
+module.exports = {
+  config: path.resolve("src/config", "config.js"),
+  "models-path": path.resolve("src", "models"),
+  "seeders-path": path.resolve("src", "seeders"),
+  "migrations-path": path.resolve("src", "migrations"),
+};
+```
+
+**config/config.js**
+
+```js
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV || "development"}`,
+});
+
+module.exports = {
+  development: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 3306,
+    dialect: "mysql",
+    logging: false,
+  },
+  production: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 3306,
+    dialect: "mysql",
+    logging: false,
+  },
+  test: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT || 3306,
+    dialect: "mysql",
+    logging: false,
+  },
+};
+```
+
+> Tip: las credenciales vienen de tu `.env.development` / `.env.production`.
+
+### 2) Migration inicial (opcional, placeholder)
+
+```bash
+npx sequelize-cli migration:generate --name <<nombre-migracion>>
+```
+
+Editá el archivo generado en `src/migrations/*-<<nombre-migracion>>.js` con un no-op:
+
+Estructura basica de migracion:
+
+```js
+"use strict";
+module.exports = {
+  async up() {
+    /* no-op */
+  },
+  async down() {
+    /* no-op */
+  },
+};
+```
+
+```js
+// Ejemplo de migration (doc):
+// Crea una tabla simple `Bancos` con timestamps.
+// Para generar y correr:
+//   npx sequelize-cli migration:generate --name create-bancos
+//   npm run db:migrate
+
+"use strict";
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("Bancos", {
+      idBanco: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      nombre: {
+        type: Sequelize.STRING(100),
+        allowNull: false,
+        unique: true,
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn("NOW"),
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn("NOW"),
+      },
+    });
+  },
+  async down(queryInterface) {
+    await queryInterface.dropTable("Bancos");
+  },
+};
+```
+
+### 3) Correr migraciones
+
+```bash
+npm run db:migrate
+# para deshacer la última:
+# npm run db:migrate:undo
+# para deshacer todas:
+# npm run db:migrate:undo:all
+```
+
+### 4) Seed básico (datos de ejemplo)
+
+```bash
+npm run db:seed:basic
+```
+
+Inserta 10 filas en **Bancos, Roles, Zonas, Categorias, SubCategorias, Marcas, Caracteristicas** y crea usuarios:
+
+- `admin@mail.com` → rol **Administrador** (idRol=1)
+- `operario@mail.com` → rol **Operario** (idRol=2)
+- `usuario@mail.com` → rol **Usuario** (idRol=3)
+
+> Usa `ignoreDuplicates: true`. Si MySQL marca incompatibilidad de FK, asegurate que PK/FK tengan el mismo tipo (ej. `INTEGER.UNSIGNED`).
 
 ---
