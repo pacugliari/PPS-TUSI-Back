@@ -1,44 +1,34 @@
 const ResponseBuilder = require("../utils/api-response");
-const HttpError = require("../utils/http-error");
 
-const auth = async (req, res, next) => {
-  if (req.originalUrl.startsWith("/api")) {
+module.exports = async function auth(req, res, next) {
+  try {
     const { verifyToken } = await import("../utils/jwt.mjs");
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
+    const hdr = req.headers.authorization;
+    if (!hdr?.startsWith("Bearer ")) {
       return res
         .status(401)
         .json(
-          ResponseBuilder.error(
-            "No se ha proporcionado un token de autenticación",
-            [{ token: "El token es requerido" }],
-            401
-          )
+          ResponseBuilder.error("Falta token", [{ token: "Requerido" }], 401)
         );
     }
-
-    const token = authHeader.split(" ")[1];
-    const payload = await verifyToken(token);
-    req.payload = payload;
-    if (!payload)
+    const token = hdr.split(" ")[1];
+    const payload = await verifyToken(token).catch(() => null);
+    if (!payload) {
       return res
         .status(401)
         .json(
-          ResponseBuilder.error(
-            "Token inválido",
-            [{ token: "El token es inválido o no autorizado" }],
-            401
-          )
+          ResponseBuilder.error("Token inválido", [{ token: "Inválido" }], 401)
         );
-
-    req.user = payload;
+    }
+    // listo: sólo del token
+    req.user = {
+      id: payload.id,
+      email: payload.email,
+      role: payload.role,
+      permisos: payload.permisos || [],
+    };
     next();
-  } else {
-    if (req.session.user) return next();
-    throw new HttpError(401, "No autenticado", "auth/login").setErrors([
-      { session: "No hay una sesión activa o ha expirado" },
-    ]);
+  } catch (e) {
+    next(e);
   }
 };
-
-module.exports = auth;
