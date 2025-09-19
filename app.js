@@ -9,6 +9,7 @@ dotenv.config({ path: `.env.${env}` });
 
 // Rutas
 const authRoutes = require("./src/routes/auth");
+const productsRoutes = require("./src/routes/producto");
 
 // Middlewares
 const errorHandler = require("./src/middlewares/http-error");
@@ -26,7 +27,7 @@ app.use(corsMiddleware);
 
 // Rutas
 app.use("/api/auth", authRoutes);
-
+app.use("/api/products", productsRoutes);
 
 // Handler de errores (al final)
 app.use(errorHandler);
