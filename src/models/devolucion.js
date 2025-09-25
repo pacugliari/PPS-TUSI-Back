@@ -13,5 +13,6 @@ module.exports = (sequelize) => {
     fecha: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     estado: { type: DataTypes.ENUM('revision','aprobado','rechazado'), defaultValue: 'revision' },
   }, { tableName: 'Devoluciones', timestamps: true });
+
   return Devolucion;
 };

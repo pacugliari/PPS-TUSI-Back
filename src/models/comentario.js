@@ -7,8 +7,6 @@ module.exports = (sequelize) => {
     idUsuario: { type: DataTypes.INTEGER, allowNull: false },
     puntuacion: { type: DataTypes.INTEGER, allowNull: false, validate: { min:1, max:5 } },
     comentario: { type: DataTypes.TEXT, allowNull: false },
-    fechaCreacion: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-    fechaModificacion: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
   }, { tableName: 'Comentarios', timestamps: true });
   return Comentario;
 };

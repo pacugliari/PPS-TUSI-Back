@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=production nodemon app.js",
     "dev": "cross-env NODE_ENV=development nodemon app.js",
+    "debug": "cross-env NODE_ENV=development nodemon --inspect app.js",
     "db:seed:basic": "node src/seeders/seed-basico.js",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
