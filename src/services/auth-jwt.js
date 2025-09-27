@@ -1,6 +1,6 @@
 const HttpError = require("../utils/http-error");
 const bcrypt = require("bcryptjs");
-const { Usuario, Rol } = require("../models");
+const { Usuario, Rol, Perfil } = require("../models");
 const { isValidEmail, isValidPassword } = require("../utils/validators");
 
 const DEFAULT_USER_ROLE_ID = 3;
@@ -65,39 +65,42 @@ const login = async (req) => {
     where: { email },
     include: [
       { model: Rol, as: "rol", attributes: ["idRol", "nombre", "tipo"] },
+      {
+        model: Perfil,
+        as: "perfil",
+        attributes: ["nombre"],
+      },
     ],
   });
 
   const valid = user ? await bcrypt.compare(password, user.password) : false;
-
   if (!user || !valid) {
     throw new HttpError(400, "Credenciales inválidas").setErrors([
       { credentials: "Email o contraseña incorrectos" },
     ]);
   }
 
-  // Plano sin password
-  const plain = user.get ? user.get({ plain: true }) : user.toJSON?.() || {};
+  const plain = user.get({ plain: true });
   delete plain.password;
 
-  // Elegí qué campo del rol querés en el token/respuesta (tipo o nombre)
-  const roleInfo = user.rol
-    ? { idRol: user.rol.idRol, tipo: user.rol.tipo, nombre: user.rol.nombre }
+  const roleInfo = plain.rol
+    ? { idRol: plain.rol.idRol, tipo: plain.rol.tipo, nombre: plain.rol.nombre }
     : null;
 
   return {
     token: await signToken({
-      id: user.idUsuario, // ✅ tu PK real
-      email: user.email,
-      role: roleInfo?.tipo || null, // ej: 'administrador' | 'operario' | 'usuario'
+      id: plain.idUsuario,
+      email: plain.email,
+      role: roleInfo?.tipo || null,
+      profileId: plain.perfil?.idPerfil ?? null,
     }),
     user: {
-      id: user.idUsuario,
-      email: user.email,
-      role: roleInfo, // te dejo todo el objeto del rol
-      compraOnline: user.compraOnline,
+      id: plain.idUsuario,
+      email: plain.email,
+      role: roleInfo,
+      compraOnline: plain.compraOnline,
+      perfil: plain.perfil || null,
     },
   };
 };
-
 module.exports = { register, login };

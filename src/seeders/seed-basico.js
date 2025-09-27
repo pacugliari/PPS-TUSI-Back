@@ -122,7 +122,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         precio: 100000 + idx*2500,
         descripcion: `Descripción del producto ${idx}`,
         stock: 50 + idx,
-        fotos: [],
+        fotos: [`https://dummyimage.com/800x1200/cccccc/000000&text=Producto+${idx}`],
       };
     });
     await Producto.bulkCreate(productos, { ignoreDuplicates: true });

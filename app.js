@@ -142,8 +142,6 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use(
   "/api/products",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   productsRoutes
 );
 app.use(
