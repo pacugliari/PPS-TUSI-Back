@@ -182,7 +182,6 @@ DetallePedido.belongsTo(Producto, {
   foreignKey: { name: "idProducto", allowNull: false },
   as: "producto",
 });
-Pedido.hasMany(DetallePedido, { foreignKey: "idPedido", as: "detalles" });
 
 // Envío (1:1) Pedido y (N:1) Dirección
 Envio.belongsTo(Pedido, {

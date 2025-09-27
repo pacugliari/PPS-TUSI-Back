@@ -10,8 +10,6 @@ module.exports = (sequelize) => {
     precio: { type: DataTypes.DECIMAL(12,2), allowNull: false },
     descripcion: { type: DataTypes.TEXT },
     stock: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 }, // campo rápido
-    fechaCreacion: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-    fechaModificacion: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     fotos: { type: DataTypes.JSON, defaultValue: [] },
   }, { tableName: 'Productos', timestamps: true });
   return Producto;
