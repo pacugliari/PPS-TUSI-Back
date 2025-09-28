@@ -2,31 +2,21 @@ const ResponseBuilder = require("../utils/api-response");
 const bancoService = require("../services/banco");
 
 const getAllController = async (req, res) => {
-  try {
-    const result = await bancoService.getAllService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        result,
-        "Bancos consultados exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await bancoService.getAllService(req),
+      "Bancos consultados exitosamente"
+    )
+  );
 };
 
 const getByIdController = async (req, res) => {
-  try {
-    const result = await bancoService.getByIdService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        result,
-        "Banco consultado exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await bancoService.getByIdService(req),
+      "Banco consultado exitosamente"
+    )
+  );
 };
 
 module.exports = {
