@@ -10,4 +10,23 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function create(data) {
+  const row = await Zona.create(data);
+  const created = await findById(row.idZona);
+  return created;
+}
+
+async function update(id, data) {
+  const [updated] = await Zona.update(data, {
+    where: { idZona: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+module.exports = {
+  findAll,
+  findById,
+  create,
+  update
+};

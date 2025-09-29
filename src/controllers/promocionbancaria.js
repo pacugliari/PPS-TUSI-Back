@@ -19,7 +19,27 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const createController = async (req, res) => {
+  res.status(201).json(
+    ResponseBuilder.success(
+      await promocionBancariaService.createService(req),
+      "Promoción bancaria creada exitosamente"
+    )
+  );
+};
+
+const updateController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await promocionBancariaService.updateService(req),
+      "Promoción bancaria actualizada exitosamente"
+    )
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  createController,
+  updateController,
 };

@@ -19,7 +19,27 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const createController = async (req, res) => {
+  res.status(201).json(
+    ResponseBuilder.success(
+      await perfilService.createService(req),
+      "Perfil creado exitosamente"
+    )
+  );
+};
+
+const updateController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await perfilService.updateService(req),
+      "Perfil actualizado exitosamente"
+    )
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  createController,
+  updateController,
 };

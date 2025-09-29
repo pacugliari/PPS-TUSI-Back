@@ -19,7 +19,27 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const createController = async (req, res) => {
+  res.status(201).json(
+    ResponseBuilder.success(
+      await tarjetaService.createService(req),
+      "Tarjeta creada exitosamente"
+    )
+  );
+};
+
+const updateController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await tarjetaService.updateService(req),
+      "Tarjeta actualizada exitosamente"
+    )
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  createController,
+  updateController,
 };

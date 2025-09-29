@@ -20,4 +20,23 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function create(data) {
+  const row = await Direccion.create(data);
+  const created = await findById(row.idDireccion);
+  return created;
+}
+
+async function update(id, data) {
+  const [updated] = await Direccion.update(data, {
+    where: { idDireccion: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+module.exports = {
+  findAll,
+  findById,
+  create,
+  update,
+};

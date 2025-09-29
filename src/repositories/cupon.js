@@ -18,4 +18,28 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function findOne(where) {
+  const row = await Cupon.findOne({ where });
+  return row ? row.get({ plain: true }) : null;
+}
+
+async function create(data) {
+  const row = await Cupon.create(data);
+  return row.get({ plain: true });
+}
+
+async function update(id, data) {
+  const [updated] = await Cupon.update(data, {
+    where: { idCupon: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+module.exports = {
+  findAll,
+  findById,
+  findOne,
+  create,
+  update,
+};

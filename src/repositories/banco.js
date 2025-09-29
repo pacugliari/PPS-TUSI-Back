@@ -10,4 +10,28 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function findOne(where) {
+  const row = await Banco.findOne({ where });
+  return row ? row.get({ plain: true }) : null;
+}
+
+async function create(data) {
+  const row = await Banco.create(data);
+  return row.get({ plain: true });
+}
+
+async function update(id, data) {
+  const [updated] = await Banco.update(data, {
+    where: { idBanco: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+module.exports = {
+  findAll,
+  findById,
+  findOne,
+  create,
+  update,
+};
