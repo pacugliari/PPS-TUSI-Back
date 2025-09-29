@@ -64,9 +64,18 @@ const updateService = async (req) => {
   return { data: direccionActualizada };
 };
 
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const direccion = await direccionRepository.findById(id);
+  if (!direccion) throw new HttpError(404, "Dirección no encontrada");
+  await direccionRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
+  deleteService
 };

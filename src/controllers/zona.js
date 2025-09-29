@@ -36,10 +36,17 @@ const updateController = async (req, res) => {
     )
   );
 };
+const deleteController = async (req, res) => {
+  await zonaService.deleteService(req);
+  res.status(200).json(
+    ResponseBuilder.success(null, "Zona eliminada exitosamente", 204)
+  );
+};
 
 module.exports = {
   getAllController,
   getByIdController,
   createController,
   updateController,
+  deleteController,
 };

@@ -34,9 +34,14 @@ async function update(id, data) {
   return await findById(id);
 }
 
+async function remove(id) {
+  return await Direccion.destroy({ where: { idDireccion: id } });
+}
+
 module.exports = {
   findAll,
   findById,
   create,
   update,
+  remove,
 };

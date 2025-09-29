@@ -68,9 +68,18 @@ const updateService = async (req) => {
   return { data: bancoActualizado };
 };
 
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const banco = await bancoRepository.findById(id);
+  if (!banco) throw new HttpError(404, "Banco no encontrado");
+  await bancoRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
+  deleteService,
 };

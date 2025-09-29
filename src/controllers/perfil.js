@@ -37,9 +37,17 @@ const updateController = async (req, res) => {
   );
 };
 
+const deleteController = async (req, res) => {
+  await perfilService.deleteService(req);
+  res.status(200).json(
+    ResponseBuilder.success(null, "Perfil eliminado exitosamente", 204)
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
   createController,
   updateController,
+  deleteController,
 };

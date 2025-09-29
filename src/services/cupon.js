@@ -100,9 +100,18 @@ const updateService = async (req) => {
   return { data: updatedCupon };
 };
 
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const cupon = await cuponRepository.findById(id);
+  if (!cupon) throw new HttpError(404, "Cupón no encontrado");
+  await cuponRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
+  deleteService,
 };

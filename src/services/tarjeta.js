@@ -95,9 +95,18 @@ const updateService = async (req) => {
   return { data: tarjetaActualizada };
 };
 
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const tarjeta = await tarjetaRepository.findById(id);
+  if (!tarjeta) throw new HttpError(404, "Tarjeta no encontrada");
+  await tarjetaRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
+  deleteService
 };

@@ -104,9 +104,18 @@ const updateService = async (req) => {
   return { data: promocionActualizada };
 };
 
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const promocion = await promocionBancariaRepository.findById(id);
+  if (!promocion) throw new HttpError(404, "Promoción bancaria no encontrada");
+  await promocionBancariaRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
+  deleteService
 };

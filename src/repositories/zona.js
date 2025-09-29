@@ -24,9 +24,14 @@ async function update(id, data) {
   return await findById(id);
 }
 
+async function remove(id) {
+  return await Zona.destroy({ where: { idZona: id } });
+}
+
 module.exports = {
   findAll,
   findById,
   create,
-  update
+  update,
+  remove
 };

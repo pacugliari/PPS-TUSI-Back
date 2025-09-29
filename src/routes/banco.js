@@ -4,12 +4,14 @@ const {
   getAllController,
   getByIdController,
   createController,
-  updateController
+  updateController,
+  deleteController
 } = require("../controllers/banco");
 
 router.get("/", getAllController);
 router.get("/:id", getByIdController);
 router.post("/", createController);
 router.put("/:id", updateController);
+router.delete("/:id", deleteController);
 
 module.exports = router;

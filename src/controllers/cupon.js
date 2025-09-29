@@ -37,9 +37,17 @@ const updateController = async (req, res) => {
   );
 };
 
+const deleteController = async (req, res) => {
+  await cuponService.deleteService(req);
+  res.status(200).json(
+    ResponseBuilder.success(null, "Cupón eliminado exitosamente", 204)
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
   createController,
   updateController,
+  deleteController,
 };

@@ -35,6 +35,9 @@ async function update(id, data) {
   if (!updated) return null;
   return await findById(id);
 }
+async function remove(id) {
+  return await Cupon.destroy({ where: { idCupon: id } });
+}
 
 module.exports = {
   findAll,
@@ -42,4 +45,5 @@ module.exports = {
   findOne,
   create,
   update,
+  remove,
 };

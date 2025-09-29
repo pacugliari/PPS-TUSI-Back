@@ -28,10 +28,15 @@ async function update(id, data) {
   return await findById(id);
 }
 
+async function remove(id) {
+  return await Banco.destroy({ where: { idBanco: id } });
+}
+
 module.exports = {
   findAll,
   findById,
   findOne,
   create,
   update,
+  remove
 };

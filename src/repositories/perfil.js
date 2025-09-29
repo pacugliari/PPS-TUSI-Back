@@ -36,10 +36,15 @@ async function update(id, data) {
   return await findById(id);
 }
 
+async function remove(id) {
+  return await Perfil.destroy({ where: { idPerfil: id } });
+}
+
 module.exports = {
   findAll,
   findById,
   findOne,
   create,
   update,
+  remove,
 };

@@ -63,9 +63,18 @@ const updateService = async (req) => {
   return { data: updatedPerfil };
 };
 
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const perfil = await perfilRepository.findById(id);
+  if (!perfil) throw new HttpError(404, "Perfil no encontrado");
+  await perfilRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
+  deleteService,
 };

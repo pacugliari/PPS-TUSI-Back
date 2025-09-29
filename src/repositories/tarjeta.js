@@ -39,10 +39,15 @@ async function update(id, data) {
   return await findById(id);
 }
 
+async function remove(id) {
+  return await Tarjeta.destroy({ where: { idTarjeta: id } });
+}
+
 module.exports = {
   findAll,
   findById,
   findOne,
   create,
   update,
+  remove
 };

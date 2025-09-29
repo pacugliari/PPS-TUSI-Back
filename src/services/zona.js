@@ -38,9 +38,18 @@ const updateService = async (req) => {
   return zona;
 };
 
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const zona = await zonaRepository.findById(id);
+  if (!zona) throw new HttpError(404, "Zona no encontrada");
+  await zonaRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
+  deleteService
 };
