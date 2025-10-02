@@ -2,31 +2,21 @@ const ResponseBuilder = require("../utils/api-response");
 const subcategoriaService = require("../services/subcategoria");
 
 const getAllController = async (req, res) => {
-  try {
-    const subcategorias = await subcategoriaService.getAllService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        subcategorias,
-        "Subcategorías consultadas exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await subcategoriaService.getAllService(req),
+      "Subcategorías consultadas exitosamente"
+    )
+  );
 };
 
 const getByIdController = async (req, res) => {
-  try {
-    const result = await subcategoriaService.getByIdService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        result,
-        "Subcategoría consultada exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await subcategoriaService.getByIdService(req),
+      "Subcategoría consultada exitosamente"
+    )
+  );
 };
 
 module.exports = {

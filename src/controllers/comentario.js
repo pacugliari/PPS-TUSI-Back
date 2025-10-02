@@ -2,31 +2,21 @@ const ResponseBuilder = require("../utils/api-response");
 const comentarioService = require("../services/comentario");
 
 const getAllController = async (req, res) => {
-  try {
-    const result = await comentarioService.getAllService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        result,
-        "Comentarios consultados exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await comentarioService.getAllService(req),
+      "Comentarios consultados exitosamente"
+    )
+  );
 };
 
 const getByIdController = async (req, res) => {
-  try {
-    const result = await comentarioService.getByIdService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        result,
-        "Comentario consultado exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await comentarioService.getByIdService(req),
+      "Comentario consultado exitosamente"
+    )
+  );
 };
 
 module.exports = {

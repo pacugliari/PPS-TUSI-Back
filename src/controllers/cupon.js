@@ -2,31 +2,21 @@ const ResponseBuilder = require("../utils/api-response");
 const cuponService = require("../services/cupon");
 
 const getAllController = async (req, res) => {
-  try {
-    const cupones = await cuponService.getAllService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        cupones,
-        "Cupones consultados exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await cuponService.getAllService(req),
+      "Cupones consultados exitosamente"
+    )
+  );
 };
 
 const getByIdController = async (req, res) => {
-  try {
-    const result = await cuponService.getByIdService(req);
-    res.status(200).json(
-      ResponseBuilder.success(
-        result,
-        "Cupón consultado exitosamente"
-      )
-    );
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(
+    ResponseBuilder.success(
+      await cuponService.getByIdService(req),
+      "Cupón consultado exitosamente"
+    )
+  );
 };
 
 module.exports = {
