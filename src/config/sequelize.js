@@ -13,25 +13,28 @@ const sequelize = new Sequelize(
     port: process.env.DB_PORT,
     dialect: "mysql",
     logging: false,
-    pool: {
-      max: 10,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
+    pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
   }
 );
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log(`✅ Conexión a Sequelize exitosa: ${process.env.DB_HOST}`);
-    // 🔹 Sincronizar todos los modelos registrados
-    return sequelize.sync({ alter: true }); // o { force: true } en dev
-  })
-  .then(() => {
-    console.log("✅ Tablas sincronizadas correctamente");
-  })
-  .catch((err) => console.error("❌ Error conectando a Sequelize:", err));
+/**
+ * Inicializa la BD.
+ * @param {{ sync?: false | 'alter' | 'force' }} options
+ *   - sync: false (no sync), 'alter' (ajusta), 'force' (drop + create)
+ */
+async function initDb({ sync = false } = {}) {
+  await sequelize.authenticate();
+  console.log("✅ Conexión a la base de datos establecida");
 
-module.exports = sequelize;
+  if (sync === "force") {
+    await sequelize.sync({ force: true });
+    console.log("⚠️  sync { force: true } ejecutado (tablas recreadas)");
+  } else if (sync === "alter") {
+    await sequelize.sync({ alter: true });
+    console.log("✅ sync { alter: true } ejecutado (tablas actualizadas)");
+  } else {
+    console.log("ℹ️  sync omitido (sync = false)");
+  }
+}
+
+module.exports = { sequelize, initDb };
