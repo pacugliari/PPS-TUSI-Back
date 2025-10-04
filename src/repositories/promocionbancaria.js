@@ -18,4 +18,28 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function create(data) {
+  const row = await PromocionBancaria.create(data);
+  const created = await findById(row.idPromocionBancaria);
+  return created;
+}
+
+async function update(id, data) {
+  const [updated] = await PromocionBancaria.update(data, {
+    where: { idPromocionBancaria: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+async function remove(id) {
+  return await PromocionBancaria.destroy({ where: { idPromocionBancaria: id } });
+}
+
+module.exports = {
+  findAll,
+  findById,
+  create,
+  update,
+  remove
+};

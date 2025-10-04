@@ -19,7 +19,35 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const createController = async (req, res) => {
+  res.status(201).json(
+    ResponseBuilder.success(
+      await direccionService.createService(req),
+      "Dirección creada exitosamente"
+    )
+  );
+};
+
+const updateController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await direccionService.updateService(req),
+      "Dirección actualizada exitosamente"
+    )
+  );
+};
+
+const deleteController = async (req, res) => {
+  await direccionService.deleteService(req);
+  res.status(200).json(
+    ResponseBuilder.success(null, "Dirección eliminada exitosamente", 204)
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  createController,
+  updateController,
+  deleteController,
 };

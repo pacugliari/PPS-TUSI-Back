@@ -18,4 +18,33 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function findOne(where) {
+  const row = await Perfil.findOne({ where });
+  return row ? row.get({ plain: true }) : null;
+}
+
+async function create(data) {
+  const row = await Perfil.create(data);
+  return row.get({ plain: true });
+}
+
+async function update(id, data) {
+  const [updated] = await Perfil.update(data, {
+    where: { idPerfil: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+async function remove(id) {
+  return await Perfil.destroy({ where: { idPerfil: id } });
+}
+
+module.exports = {
+  findAll,
+  findById,
+  findOne,
+  create,
+  update,
+  remove,
+};
