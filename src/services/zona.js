@@ -17,7 +17,39 @@ const getByIdService = async (req) => {
   return { data: zona };
 };
 
+const createService = async (req) => {
+  const { nombre } = req.body;
+  if (!nombre) {
+    throw new HttpError(400, "El nombre es requerido");
+  }
+  const zona = await zonaRepository.create({ nombre });
+  return zona;
+};
+
+const updateService = async (req) => {
+  const { id } = req.params;
+  const { nombre } = req.body;
+  if (!nombre) {
+    throw new HttpError(400, "El nombre es requerido para actualizar");
+  }
+  const zonaExistente = await zonaRepository.findById(id);
+  if (!zonaExistente) throw new HttpError(404, "Zona no encontrada");
+  const zona = await zonaRepository.update(id, { nombre });
+  return zona;
+};
+
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const zona = await zonaRepository.findById(id);
+  if (!zona) throw new HttpError(404, "Zona no encontrada");
+  await zonaRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
+  createService,
+  updateService,
+  deleteService
 };
