@@ -26,6 +26,7 @@ const propiedadRoutes = require("./src/routes/propiedad");
 const rolRoutes = require("./src/routes/rol");
 const zonaRoutes = require("./src/routes/zona");
 const detallepedidoRoutes = require("./src/routes/detallepedido");
+const homeRoutes = require("./src/routes/home");
 const devolucionRoutes = require("./src/routes/devolucion");
 const envioRoutes = require("./src/routes/envio");
 const ordenCompraRoutes = require("./src/routes/ordencompra");
@@ -156,6 +157,7 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   detallepedidoRoutes
 );
+app.use("/api/home", homeRoutes);
 app.use(
   "/api/devoluciones",
   auth,
