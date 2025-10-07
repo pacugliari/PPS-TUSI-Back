@@ -10,4 +10,28 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function create(data) {
+  const row = await Categoria.create(data);
+  const created = await findById(row.idCategoria);
+  return created;
+}
+
+async function update(id, data) {
+  const [updated] = await Categoria.update(data, {
+    where: { idCategoria: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+async function remove(id) {
+  return await Categoria.destroy({ where: { idCategoria: id } });
+}
+
+module.exports = {
+  findAll,
+  findById,
+  create,
+  update,
+  remove
+};

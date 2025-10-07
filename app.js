@@ -10,7 +10,7 @@ dotenv.config({ path: `.env.${env}` });
 const authRoutes = require("./src/routes/auth");
 const comentariosRoutes = require("./src/routes/comentario");
 const categoriasRoutes = require("./src/routes/categoria");
-const productsRoutes = require("./src/routes/producto");
+const productosRoutes = require("./src/routes/producto");
 const bancosRoutes = require("./src/routes/banco");
 const caracteristicasRoutes = require("./src/routes/caracteristica");
 const subcategoriaRoutes = require("./src/routes/subcategoria");
@@ -142,8 +142,8 @@ app.use(
 );
 app.use("/api/auth", authRoutes);
 app.use(
-  "/api/products",
-  productsRoutes
+  "/api/productos",
+  productosRoutes
 );
 app.use(
   "/api/bancos",

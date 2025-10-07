@@ -1,10 +1,10 @@
 const HttpError = require("../utils/http-error");
-const productRepository = require("../repositories/producto");
+const productoRepository = require("../repositories/producto");
 const { DetallePedido, Producto, Categoria } = require("../models");
 
 const getAllService = async (req) => {
   try {
-    const { rows } = await productRepository.findAll();
+    const { rows } = await productoRepository.findAll();
 
     return rows;
   } catch (err) {
@@ -14,7 +14,7 @@ const getAllService = async (req) => {
 
 const getByIdService = async (req) => {
   const { id } = req.params;
-  const product = await productRepository.findById(id);
+  const product = await productoRepository.findById(id);
   if (!product) throw new HttpError(404, "Producto no encontrado");
   return { data: product };
 };
@@ -71,9 +71,111 @@ const getLatestProductsService = async () => {
   }));
 };
 
+const createService = async (req) => {
+  const {
+    idCategoria,
+    idSubCategoria,
+    idMarca,
+    nombre,
+    precio,
+    descripcion,
+    stock,
+    fotos
+  } = req.body;
+
+  // Validaciones
+  const requiredFields = ['nombre', 'precio', 'idCategoria', 'idMarca'];
+  const errors = [];
+
+  requiredFields.forEach(field => {
+    if (!req.body[field]) {
+      errors.push({ [field]: `El campo ${field} es requerido` });
+    }
+  });
+
+  if (errors.length > 0) {
+    throw new HttpError(400, "Faltan campos requeridos").setErrors(errors);
+  }
+
+  if (precio <= 0) {
+    throw new HttpError(400, "El precio debe ser mayor a cero").setErrors([
+      { precio: "El precio debe ser mayor a cero" }
+    ]);
+  }
+
+  const product = await productoRepository.create({
+    idCategoria,
+    idSubCategoria,
+    idMarca,
+    nombre,
+    precio,
+    descripcion,
+    stock,
+    fotos: Array.isArray(fotos) ? fotos : [],
+  });
+
+  return product;
+};
+
+const updateService = async (req) => {
+  const { id } = req.params;
+  const {
+    idCategoria,
+    idSubCategoria,
+    idMarca,
+    nombre,
+    precio,
+    descripcion,
+    stock,
+    fotos
+  } = req.body;
+
+  // Verificar si existe
+  const productoExistente = await productoRepository.findById(id);
+  if (!productoExistente) {
+    throw new HttpError(404, "Producto no encontrado");
+  }
+
+  // Validaciones para campos que se vayan a actualizar
+  const errors = [];
+
+  if (precio !== undefined && precio <= 0) {
+    errors.push({ precio: "El precio debe ser mayor a cero" });
+  }
+
+  if (errors.length > 0) {
+    throw new HttpError(400, "Datos inválidos").setErrors(errors);
+  }
+
+  const updateData = {};
+  if (idCategoria !== undefined) updateData.idCategoria = idCategoria;
+  if (idSubCategoria !== undefined) updateData.idSubCategoria = idSubCategoria;
+  if (idMarca !== undefined) updateData.idMarca = idMarca;
+  if (nombre !== undefined) updateData.nombre = nombre;
+  updateData.precio = precio;
+  updateData.precioAnterior = productoExistente.precio;
+  if (descripcion !== undefined) updateData.descripcion = descripcion;
+  if (stock !== undefined) updateData.stock = stock;
+  if (fotos !== undefined) updateData.fotos = Array.isArray(fotos) ? fotos : [];
+
+  const updatedProduct = await productoRepository.update(id, updateData);
+  return updatedProduct;
+};
+
+const deleteService = async (req) => {
+  const { id } = req.params;
+  const product = await productoRepository.findById(id);
+  if (!product) throw new HttpError(404, "Producto no encontrado");
+  await productoRepository.remove(id);
+  return true;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   getPopularProductsService,
   getLatestProductsService,
+  createService,
+  updateService,
+  deleteService,
 };
