@@ -19,7 +19,34 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const createController = async (req, res) => {
+  res.status(201).json(
+    ResponseBuilder.success(
+      await zonaService.createService(req),
+      "Zona creada exitosamente"
+    )
+  );
+};
+
+const updateController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await zonaService.updateService(req),
+      "Zona actualizada exitosamente"
+    )
+  );
+};
+const deleteController = async (req, res) => {
+  await zonaService.deleteService(req);
+  res.status(200).json(
+    ResponseBuilder.success(null, "Zona eliminada exitosamente", 204)
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  createController,
+  updateController,
+  deleteController,
 };

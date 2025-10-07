@@ -20,4 +20,34 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function findOne(where) {
+  const row = await Tarjeta.findOne({ where });
+  return row ? row.get({ plain: true }) : null;
+}
+
+async function create(data) {
+  const row = await Tarjeta.create(data);
+  const created = await findById(row.idTarjeta);
+  return created;
+}
+
+async function update(id, data) {
+  const [updated] = await Tarjeta.update(data, {
+    where: { idTarjeta: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+async function remove(id) {
+  return await Tarjeta.destroy({ where: { idTarjeta: id } });
+}
+
+module.exports = {
+  findAll,
+  findById,
+  findOne,
+  create,
+  update,
+  remove
+};
