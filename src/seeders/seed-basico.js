@@ -25,56 +25,57 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
      *  BASE
      * ========================= */
     await Banco.bulkCreate(
-      ['Nacion','Provincia','Ciudad','Patagonia','Galicia','Santander','BBVA','Macro','HSBC','ICBC']
+      ['Nacion', 'Provincia', 'Ciudad', 'Patagonia', 'Galicia', 'Santander', 'BBVA', 'Macro', 'HSBC', 'ICBC']
         .map((nombre, i) => ({ idBanco: i + 1, nombre })),
       { ignoreDuplicates: true }
     );
 
     await Rol.bulkCreate([
-      { idRol:1, nombre:'Administrador', tipo:'administrador', permisos:['*'] },
-      { idRol:2, nombre:'Operario',     tipo:'operario',      permisos:['pedidos:read','stock:update'] },
-      { idRol:3, nombre:'Usuario',      tipo:'usuario',       permisos:[] },
+      { idRol: 1, nombre: 'Administrador', tipo: 'administrador', permisos: ['*'] },
+      { idRol: 2, nombre: 'Operario', tipo: 'operario', permisos: ['pedidos:read', 'stock:update'] },
+      { idRol: 3, nombre: 'Usuario', tipo: 'usuario', permisos: [] },
     ], { ignoreDuplicates: true });
 
     await Zona.bulkCreate(
-      Array.from({length:10}, (_,i)=>({ idZona:i+1, nombre:`Zona ${i+1}`, costoEnvio:300+i*25 })),
-      { ignoreDuplicates:true }
+      Array.from({ length: 10 }, (_, i) => ({ idZona: i + 1, nombre: `Zona ${i + 1}`, costoEnvio: 300 + i * 25 })),
+      { ignoreDuplicates: true }
     );
 
-    const categorias = ['Notebooks','PCs','Monitores','Periféricos','Audio','Conectividad','Almacenamiento','Impresión','Gaming','Accesorios']
-      .map((nombre,i)=>({ idCategoria:i+1, nombre, descripcion:`Categoria ${nombre}` }));
+    const categorias = ['Notebooks', 'PCs', 'Monitores', 'Periféricos', 'Audio', 'Conectividad', 'Almacenamiento', 'Impresión', 'Gaming', 'Accesorios']
+      .map((nombre, i) => ({ idCategoria: i + 1, nombre, descripcion: `Categoria ${nombre}` }));
     await Categoria.bulkCreate(categorias, { ignoreDuplicates: true });
 
     await SubCategoria.bulkCreate(
-      Array.from({length:10},(_,i)=>({ idSubCategoria:i+1, idCategoria:(i%10)+1, nombre:`Subcat ${i+1}`, descripcion:`Subcategoria ${i+1}` })),
+      Array.from({ length: 10 }, (_, i) => ({ idSubCategoria: i + 1, idCategoria: (i % 10) + 1, nombre: `Subcat ${i + 1}`, descripcion: `Subcategoria ${i + 1}` })),
       { ignoreDuplicates: true }
     );
 
     await Marca.bulkCreate(
-      ['Acer','Asus','Lenovo','HP','Dell','Logitech','MSI','Gigabyte','Kingston','Samsung']
-        .map((nombre,i)=>({ idMarca:i+1, nombre, descripcion:`Marca ${nombre}` })),
+      ['Acer', 'Asus', 'Lenovo', 'HP', 'Dell', 'Logitech', 'MSI', 'Gigabyte', 'Kingston', 'Samsung']
+        .map((nombre, i) => ({ idMarca: i + 1, nombre, descripcion: `Marca ${nombre}` })),
       { ignoreDuplicates: true }
     );
 
     await Caracteristica.bulkCreate(
-      ['Color','Peso','Dimensiones','Capacidad','Velocidad','Material','Garantía','Potencia','Compatibilidad','Modelo']
-        .map((descripcion,i)=>({ idCaracteristica:i+1, descripcion })),
+      ['Color', 'Peso', 'Dimensiones', 'Capacidad', 'Velocidad', 'Material', 'Garantía', 'Potencia', 'Compatibilidad', 'Modelo']
+        .map((descripcion, i) => ({ idCaracteristica: i + 1, descripcion })),
       { ignoreDuplicates: true }
     );
 
     await Usuario.bulkCreate([
-      { idUsuario:1, idRol:1, compraOnline:false, email:'admin@mail.com',    password:await bcrypt.hash('hashdemo123',10) },
-      { idUsuario:2, idRol:2, compraOnline:false, email:'operario@mail.com',  password:await bcrypt.hash('hashdemo123',10) },
-      { idUsuario:3, idRol:3, compraOnline:false, email:'usuario@mail.com',   password:await bcrypt.hash('hashdemo123',10) },
+      { idUsuario: 1, idRol: 1, compraOnline: false, email: 'admin@mail.com', password: await bcrypt.hash('hashdemo123', 10) },
+      { idUsuario: 2, idRol: 2, compraOnline: false, email: 'operario@mail.com', password: await bcrypt.hash('hashdemo123', 10) },
+      { idUsuario: 3, idRol: 3, compraOnline: false, email: 'usuario@mail.com', password: await bcrypt.hash('hashdemo123', 10) },
     ], { ignoreDuplicates: true });
 
-    const user3 = await Usuario.findOne({ where:{ email:'usuario@mail.com' } });
+    const user3 = await Usuario.findOne({ where: { email: 'usuario@mail.com' } });
     const userId = user3?.idUsuario ?? 3;
 
     await Perfil.bulkCreate([{
       idPerfil: 1,
       idUsuario: userId,
       nombre: 'Usuario Final',
+      tipoDocumento: 'DNI',
       dni: 40123456,
       telefono: '+54 11 5555-1234',
     }], { ignoreDuplicates: true });
@@ -91,22 +92,22 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     const dirUser = direcciones[0];
 
     await Tarjeta.bulkCreate([
-      { idTarjeta:1, idUsuario:userId, idBanco:5, tipo:'VISA',        codigo:'123', numero:'4111 1111 1111 1111' },
-      { idTarjeta:2, idUsuario:userId, idBanco:6, tipo:'MASTERCARD',  codigo:'456', numero:'5500 0000 0000 0004' },
+      { idTarjeta: 1, idUsuario: userId, idBanco: 5, tipo: 'VISA', codigo: '123', numero: '4111 1111 1111 1111' },
+      { idTarjeta: 2, idUsuario: userId, idBanco: 6, tipo: 'MASTERCARD', codigo: '456', numero: '5500 0000 0000 0004' },
     ], { ignoreDuplicates: true });
 
-    const hoy  = new Date();
-    const en30 = new Date(hoy.getTime() + 30*24*60*60*1000);
+    const hoy = new Date();
+    const en30 = new Date(hoy.getTime() + 30 * 24 * 60 * 60 * 1000);
 
     await Cupon.bulkCreate([
-      { idCupon:1, idUsuario:userId, monto:10, codigo:'BIENVENIDA10', fechaDesde:hoy, fechaHasta:en30 },
-      { idCupon:2, idUsuario:userId, monto:0,  codigo:'ENVIOGRATIS',  fechaDesde:hoy, fechaHasta:en30 },
+      { idCupon: 1, idUsuario: userId, monto: 10, codigo: 'BIENVENIDA10', fechaDesde: hoy, fechaHasta: en30 },
+      { idCupon: 2, idUsuario: userId, monto: 0, codigo: 'ENVIOGRATIS', fechaDesde: hoy, fechaHasta: en30 },
     ], { ignoreDuplicates: true });
 
     await PromocionBancaria.bulkCreate([
-      { idPromocionBancaria:1, idBanco:5, nombre:'12 cuotas sin interés',   fechaDesde:hoy, fechaHasta:en30, dias:['viernes','sabado','domingo'] },
-      { idPromocionBancaria:2, idBanco:6, nombre:'15% off con Mastercard',  fechaDesde:hoy, fechaHasta:en30, dias:['lunes','martes','miercoles','jueves'] },
-    ], { ignoreDuplicates:true });
+      { idPromocionBancaria: 1, idBanco: 5, nombre: '12 cuotas sin interés', fechaDesde: hoy, fechaHasta: en30, dias: ['viernes', 'sabado', 'domingo'] },
+      { idPromocionBancaria: 2, idBanco: 6, nombre: '15% off con Mastercard', fechaDesde: hoy, fechaHasta: en30, dias: ['lunes', 'martes', 'miercoles', 'jueves'] },
+    ], { ignoreDuplicates: true });
 
     /* =========================
      *  PRODUCTOS (10) + STOCK + PROPIEDADES (5 c/u) + COMENTARIOS (5 c/u)
@@ -115,11 +116,12 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       const idx = i + 1;
       return {
         idProducto: idx,
-        idCategoria: ((idx-1)%10)+1,
-        idSubCategoria: ((idx-1)%10)+1,
-        idMarca: ((idx-1)%10)+1,
+        idCategoria: ((idx - 1) % 10) + 1,
+        idSubCategoria: ((idx - 1) % 10) + 1,
+        idMarca: ((idx - 1) % 10) + 1,
         nombre: `Producto ${idx}`,
-        precio: 100000 + idx*2500,
+        precio: 100000 + idx * 2500,
+        precioAnterior: idx % 2 === 0 ? 120000 + idx * 2500 : null,
         descripcion: `Descripción del producto ${idx}`,
         stock: 50 + idx,
         fotos: [`https://dummyimage.com/800x1200/cccccc/000000&text=Producto+${idx}`],
@@ -196,8 +198,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       });
 
       detallesData.push(
-        { idDetallePedido: i*2-1, idPedido: i, idProducto: p1.idProducto, cantidad: cant1 },
-        { idDetallePedido: i*2,   idPedido: i, idProducto: p2.idProducto, cantidad: cant2 },
+        { idDetallePedido: i * 2 - 1, idPedido: i, idProducto: p1.idProducto, cantidad: cant1 },
+        { idDetallePedido: i * 2, idPedido: i, idProducto: p2.idProducto, cantidad: cant2 },
       );
 
       if (electronico) {

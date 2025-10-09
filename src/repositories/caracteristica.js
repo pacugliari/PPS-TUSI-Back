@@ -10,4 +10,28 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function create(data) {
+  const row = await Caracteristica.create(data);
+  const created = await findById(row.idCaracteristica);
+  return created;
+}
+
+async function update(id, data) {
+  const [updated] = await Caracteristica.update(data, {
+    where: { idCaracteristica: id }
+  });
+  if (!updated) return null;
+  return await findById(id);
+}
+
+async function remove(id) {
+  return await Caracteristica.destroy({ where: { idCaracteristica: id } });
+}
+
+module.exports = {
+  findAll,
+  findById,
+  create,
+  update,
+  remove
+};

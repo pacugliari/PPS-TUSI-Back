@@ -19,7 +19,35 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const createController = async (req, res) => {
+  res.status(201).json(
+    ResponseBuilder.success(
+      await categoriaService.createService(req),
+      "Categoría creada exitosamente"
+    )
+  );
+};
+
+const updateController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await categoriaService.updateService(req),
+      "Categoría actualizada exitosamente"
+    )
+  );
+};
+
+const deleteController = async (req, res) => {
+  await categoriaService.deleteService(req);
+  res.status(200).json(
+    ResponseBuilder.success(null, "Categoría eliminada exitosamente")
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  createController,
+  updateController,
+  deleteController,
 };

@@ -19,7 +19,35 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const createController = async (req, res) => {
+  res.status(201).json(
+    ResponseBuilder.success(
+      await marcaService.createService(req),
+      "Marca creada exitosamente"
+    )
+  );
+};
+
+const updateController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await marcaService.updateService(req),
+      "Marca actualizada exitosamente"
+    )
+  );
+};
+
+const deleteController = async (req, res) => {
+  await marcaService.deleteService(req);
+  res.status(200).json(
+    ResponseBuilder.success(null, "Marca eliminada exitosamente")
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  createController,
+  updateController,
+  deleteController,
 };

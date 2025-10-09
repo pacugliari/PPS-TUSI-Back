@@ -10,7 +10,7 @@ dotenv.config({ path: `.env.${env}` });
 const authRoutes = require("./src/routes/auth");
 const comentariosRoutes = require("./src/routes/comentario");
 const categoriasRoutes = require("./src/routes/categoria");
-const productsRoutes = require("./src/routes/producto");
+const productosRoutes = require("./src/routes/producto");
 const bancosRoutes = require("./src/routes/banco");
 const caracteristicasRoutes = require("./src/routes/caracteristica");
 const subcategoriaRoutes = require("./src/routes/subcategoria");
@@ -26,6 +26,7 @@ const propiedadRoutes = require("./src/routes/propiedad");
 const rolRoutes = require("./src/routes/rol");
 const zonaRoutes = require("./src/routes/zona");
 const detallepedidoRoutes = require("./src/routes/detallepedido");
+const homeRoutes = require("./src/routes/home");
 const devolucionRoutes = require("./src/routes/devolucion");
 const envioRoutes = require("./src/routes/envio");
 const ordenCompraRoutes = require("./src/routes/ordencompra");
@@ -141,8 +142,8 @@ app.use(
 );
 app.use("/api/auth", authRoutes);
 app.use(
-  "/api/products",
-  productsRoutes
+  "/api/productos",
+  productosRoutes
 );
 app.use(
   "/api/bancos",
@@ -156,6 +157,7 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   detallepedidoRoutes
 );
+app.use("/api/home", homeRoutes);
 app.use(
   "/api/devoluciones",
   auth,

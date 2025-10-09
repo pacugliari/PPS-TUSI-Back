@@ -6,6 +6,7 @@ module.exports = (sequelize) => {
     idPerfil: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     idUsuario: { type: DataTypes.INTEGER, allowNull: false, unique: true }, // 1:1 con Usuario
     nombre: { type: DataTypes.STRING(120), allowNull: false },
+    tipoDocumento: { type: DataTypes.ENUM('DNI', 'CUIT', 'LE', 'LC'), defaultValue: 'DNI' },
     dni: { type: DataTypes.BIGINT, allowNull: false },
     telefono: { type: DataTypes.STRING(40) },
   }, { tableName: 'Perfiles', timestamps: true });
