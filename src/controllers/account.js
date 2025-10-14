@@ -48,9 +48,22 @@ const deleteAccountAddressController = async (req, res) => {
     }
 };
 
+const setPrimaryAddressController = async (req, res) => {
+    try {
+        const result = await direccionService.setPrimaryService(req);
+        res.status(200).json(
+            ResponseBuilder.success(result, "Dirección principal actualizada exitosamente")
+        );
+    } catch (err) {
+        const status = err.statusCode || 500;
+        res.status(status).json(ResponseBuilder.error(err.message, status));
+    }
+};
+
 module.exports = {
     getAccountAddressesController,
     postAccountAddressController,
     putAccountAddressController,
     deleteAccountAddressController,
+    setPrimaryAddressController,
 };

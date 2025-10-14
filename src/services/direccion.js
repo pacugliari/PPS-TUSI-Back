@@ -89,11 +89,33 @@ const getByUserService = async (req) => {
   return { data: direcciones };
 };
 
+const setPrimaryService = async (req) => {
+  const { id } = req.params;
+  const idUsuario = req.user.id;
+  
+  const direccion = await direccionRepository.findById(id);
+  if (!direccion) throw new HttpError(404, "Dirección no encontrada");
+  if (direccion.idUsuario !== idUsuario) {
+    throw new HttpError(403, "No tienes permiso para modificar esta dirección");
+  }
+  
+  const direccionesUsuario = await direccionRepository.findByIdUser(idUsuario);
+  for (const dir of direccionesUsuario) {
+    if (dir.principal) {
+      await direccionRepository.update(dir.idDireccion, { principal: false });
+    }
+  }
+  
+  const actualizada = await direccionRepository.update(id, { principal: true });
+  return { data: actualizada };
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   getByUserService,
   createService,
   updateService,
-  deleteService
+  deleteService,
+  setPrimaryService
 };
