@@ -32,6 +32,7 @@ const envioRoutes = require("./src/routes/envio");
 const ordenCompraRoutes = require("./src/routes/ordencompra");
 const itemOrdenCompraRoutes = require("./src/routes/itemordencompra");
 const pedidoRoutes = require("./src/routes/pedido");
+const accountRoutes = require("./src/routes/account");
 
 // Middlewares
 const errorHandler = require("./src/middlewares/http-error");
@@ -188,7 +189,12 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   pedidoRoutes
 );
-
+app.use(
+  "/api/account",
+  auth,
+  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
+  accountRoutes
+);
 // Handler de errores (al final)
 app.use(errorHandler);
 
