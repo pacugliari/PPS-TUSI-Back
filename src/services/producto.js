@@ -71,6 +71,20 @@ const getLatestProductsService = async () => {
   }));
 };
 
+const getByIdsService = async (ids) => {
+  if (!Array.isArray(ids) || ids.length === 0) return [];
+  const productos = await Producto.findAll({
+    where: { idProducto: ids },
+    attributes: ['idProducto', 'nombre', 'precio', 'fotos']
+  });
+  return productos.map(prod => ({
+    idProducto: prod.idProducto,
+    nombre: prod.nombre,
+    precio: prod.precio,
+    fotos: prod.fotos
+  }));
+};
+
 const createService = async (req) => {
   const {
     idCategoria,
@@ -175,6 +189,7 @@ module.exports = {
   getByIdService,
   getPopularProductsService,
   getLatestProductsService,
+  getByIdsService,
   createService,
   updateService,
   deleteService,

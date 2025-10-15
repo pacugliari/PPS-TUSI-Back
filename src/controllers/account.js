@@ -1,4 +1,5 @@
 const direccionService = require("../services/direccion");
+const productoService = require("../services/producto");
 const ResponseBuilder = require("../utils/api-response");
 
 const getAccountAddressesController = async (req, res) => {
@@ -6,6 +7,22 @@ const getAccountAddressesController = async (req, res) => {
         const result = await direccionService.getByUserService(req);
         res.status(200).json(
             ResponseBuilder.success(result, "Direcciones del usuario consultadas exitosamente")
+        );
+    } catch (err) {
+        const status = err.statusCode || 500;
+        res.status(status).json(ResponseBuilder.error(err.message, status));
+    }
+};
+
+const getFavoritesController = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json(ResponseBuilder.error("Debe enviar un array de ids", 400));
+        }
+        const result = await productoService.getByIdsService(ids);
+        res.status(200).json(
+            ResponseBuilder.success(result, "Productos favoritos consultados exitosamente")
         );
     } catch (err) {
         const status = err.statusCode || 500;
@@ -62,6 +79,7 @@ const setPrimaryAddressController = async (req, res) => {
 
 module.exports = {
     getAccountAddressesController,
+    getFavoritesController,
     postAccountAddressController,
     putAccountAddressController,
     deleteAccountAddressController,
