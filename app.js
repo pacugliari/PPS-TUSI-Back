@@ -192,7 +192,7 @@ app.use(
 app.use(
   "/api/account",
   auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
+  requireAnyRole(ROLES.USUARIO),
   accountRoutes
 );
 // Handler de errores (al final)
