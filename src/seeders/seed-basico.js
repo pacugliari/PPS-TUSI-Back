@@ -36,8 +36,40 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       { idRol: 3, nombre: 'Usuario', tipo: 'usuario', permisos: [] },
     ], { ignoreDuplicates: true });
 
+
+    const ciudad = [
+      'Springfield',
+      'Shelbyville',
+      'Capital City',
+      'Cypress Creek',
+      'North Haverbrook',
+      'Ogdenville',
+      'Waverly Hills',
+      'Little Pwagmattasquarmsettport',
+      'Guidopolis',
+      'New Springfield'
+    ];
+    const provincia = [
+      'Buenos Aires',
+      'Córdoba',
+      'Santa Fe',
+      'Mendoza',
+      'Tucumán',
+      'Salta',
+      'Chubut',
+      'Neuquén',
+      'Entre Ríos',
+      'La Pampa'
+    ];
+
     await Zona.bulkCreate(
-      Array.from({ length: 10 }, (_, i) => ({ idZona: i + 1, nombre: `Zona ${i + 1}`, costoEnvio: 300 + i * 25 })),
+      Array.from({ length: 10 }, (_, i) => ({
+        idZona: i + 1,
+        nombre: `Zona ${i + 1}`,
+        ciudad: ciudad[i],
+        provincia: provincia[i],
+        costoEnvio: 300 + i * 25
+      })),
       { ignoreDuplicates: true }
     );
 
@@ -85,8 +117,20 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       idUsuario: userId,
       idZona: 1,
       direccion: 'Av. Siempre Viva 742',
-      localidad: 'Springfield',
       cp: '1000',
+      alias: 'Casa',
+      adicionales: 'Dpto A',
+      principal: true
+    },
+    {
+      idDireccion: 2,
+      idUsuario: 1,
+      idZona: 1,
+      direccion: 'Av. Siempre Viva 744',
+      cp: '1000',
+      alias: 'Trabajo',
+      adicionales: 'Dpto B',
+      principal: false
     }];
     await Direccion.bulkCreate(direcciones, { ignoreDuplicates: true });
     const dirUser = direcciones[0];

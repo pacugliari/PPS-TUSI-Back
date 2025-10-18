@@ -19,6 +19,15 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const getByUserController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await direccionService.getByUserService(req),
+      "Direcciones del usuario consultadas exitosamente"
+    )
+  );
+};
+
 const createController = async (req, res) => {
   res.status(201).json(
     ResponseBuilder.success(
@@ -47,6 +56,7 @@ const deleteController = async (req, res) => {
 module.exports = {
   getAllController,
   getByIdController,
+  getByUserController,
   createController,
   updateController,
   deleteController,

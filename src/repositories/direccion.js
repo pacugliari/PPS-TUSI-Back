@@ -20,6 +20,17 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
+async function findByIdUser(idUsuario) {
+  const rows = await Direccion.findAll({
+    where: { idUsuario },
+    include: [
+      { model: Usuario, as: "usuario", attributes: ['idUsuario', 'email'] },
+      { model: Zona, as: "zona", attributes: ['idZona', 'nombre'] }
+    ]
+  });
+  return rows.map(r => r.get({ plain: true }));
+}
+
 async function create(data) {
   const row = await Direccion.create(data);
   const created = await findById(row.idDireccion);
@@ -41,6 +52,7 @@ async function remove(id) {
 module.exports = {
   findAll,
   findById,
+  findByIdUser,
   create,
   update,
   remove,
