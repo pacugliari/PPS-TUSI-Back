@@ -140,8 +140,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     const dirUser = direcciones[0];
 
     await Tarjeta.bulkCreate([
-      { idTarjeta: 1, idUsuario: userId, idBanco: 5, tipo: 'VISA', codigo: '123', numero: '4111 1111 1111 1111' },
-      { idTarjeta: 2, idUsuario: userId, idBanco: 6, tipo: 'MASTERCARD', codigo: '456', numero: '5500 0000 0000 0004' },
+      { idTarjeta: 1, idUsuario: userId, idBanco: 5, tipo: 'VISA', codigo: '123', numero: '4111 1111 1111 1111',activo:true },
+      { idTarjeta: 2, idUsuario: userId, idBanco: 6, tipo: 'MASTERCARD', codigo: '456', numero: '5500 0000 0000 0004',activo:true },
     ], { ignoreDuplicates: true });
 
     const hoy = new Date();

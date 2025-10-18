@@ -9,6 +9,7 @@ module.exports = (sequelize) => {
     tipo: { type: DataTypes.ENUM('VISA','MASTERCARD'), allowNull: false },
     codigo: { type: DataTypes.STRING(6), allowNull: false }, // ej: CVV
     numero: { type: DataTypes.STRING(19), allowNull: false }, // 16 + espacios
+    activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   }, { tableName: 'Tarjetas', timestamps: true });
 
   return Tarjeta;
