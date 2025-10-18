@@ -3,9 +3,9 @@ const { Tarjeta, Usuario, Banco } = require("../models");
 async function findAll() {
   const rows = await Tarjeta.findAll({
     include: [
-      { model: Usuario, as: "usuario", attributes: ['idUsuario', 'email'] },
-      { model: Banco, as: "banco", attributes: ['idBanco', 'nombre'] }
-    ]
+      { model: Usuario, as: "usuario", attributes: ["idUsuario", "email"] },
+      { model: Banco, as: "banco", attributes: ["idBanco", "nombre"] },
+    ],
   });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
@@ -13,11 +13,23 @@ async function findAll() {
 async function findById(id) {
   const row = await Tarjeta.findByPk(id, {
     include: [
-      { model: Usuario, as: "usuario", attributes: ['idUsuario', 'email'] },
-      { model: Banco, as: "banco", attributes: ['idBanco', 'nombre'] }
-    ]
+      { model: Usuario, as: "usuario", attributes: ["idUsuario", "email"] },
+      { model: Banco, as: "banco", attributes: ["idBanco", "nombre"] },
+    ],
   });
   return row ? row.get({ plain: true }) : null;
+}
+
+async function findByIdUser(idUsuario) {
+  const rows = await Tarjeta.findAll({
+    where: { idUsuario, activo: true },
+    attributes: { exclude: ['codigo'] },
+    include: [
+      { model: Usuario, as: "usuario", attributes: ["idUsuario", "email"] },
+      { model: Banco, as: "banco", attributes: ["idBanco", "nombre"] },
+    ],
+  });
+  return rows.map((r) => r.get({ plain: true }));
 }
 
 async function findOne(where) {
@@ -33,7 +45,7 @@ async function create(data) {
 
 async function update(id, data) {
   const [updated] = await Tarjeta.update(data, {
-    where: { idTarjeta: id }
+    where: { idTarjeta: id },
   });
   if (!updated) return null;
   return await findById(id);
@@ -49,5 +61,6 @@ module.exports = {
   findOne,
   create,
   update,
-  remove
+  remove,
+  findByIdUser
 };
