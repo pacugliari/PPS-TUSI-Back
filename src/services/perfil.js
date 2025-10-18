@@ -71,10 +71,29 @@ const deleteService = async (req) => {
   return true;
 };
 
+const getProfileService = async (req) => {
+  const idUsuario = req.user.id;
+  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
+
+  // Buscar perfil por idUsuario e incluir email desde Usuario
+  const perfil = await perfilRepository.findByUserId(idUsuario);
+  if (!perfil) throw new HttpError(404, "Perfil no encontrado");
+
+  return {
+    nroCliente: perfil.idUsuario,
+    nombre: perfil.nombre,
+    email: perfil.usuario?.email || null,
+    telefono: perfil.telefono,
+    tipoDoc: perfil.tipoDocumento,
+    dni: perfil.dni
+  };
+};
+
 module.exports = {
   getAllService,
   getByIdService,
   createService,
   updateService,
   deleteService,
+  getProfileService,
 };

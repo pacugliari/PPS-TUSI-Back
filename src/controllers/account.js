@@ -1,5 +1,6 @@
 const direccionService = require("../services/direccion");
 const productoService = require("../services/producto");
+const perfilService = require("../services/perfil");
 const ResponseBuilder = require("../utils/api-response");
 
 const getAccountAddressesController = async (req, res) => {
@@ -77,6 +78,18 @@ const setPrimaryAddressController = async (req, res) => {
     }
 };
 
+const getProfileController = async (req, res) => {
+    try {
+        const result = await perfilService.getProfileService(req);
+        res.status(200).json(
+            ResponseBuilder.success(result, "Perfil obtenido correctamente")
+        );
+    } catch (err) {
+        const status = err.statusCode || 500;
+        res.status(status).json(ResponseBuilder.error(err.message, status));
+    }
+};
+
 module.exports = {
     getAccountAddressesController,
     getFavoritesController,
@@ -84,4 +97,5 @@ module.exports = {
     putAccountAddressController,
     deleteAccountAddressController,
     setPrimaryAddressController,
+    getProfileController,
 };
