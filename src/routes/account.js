@@ -8,6 +8,7 @@ const {
 	deleteAccountAddressController,
 	setPrimaryAddressController,
 	getFavoritesController,
+	getZonesController,
 	getProfileController
 } = require("../controllers/account");
 
@@ -17,6 +18,7 @@ router.put("/addresses/:id", putAccountAddressController);
 router.delete("/addresses/:id", deleteAccountAddressController);
 router.patch("/addresses/:id/set-primary", setPrimaryAddressController);
 router.post("/favorites", getFavoritesController);
+router.get("/zones", getZonesController);
 router.get("/profile", getProfileController);
 
 module.exports = router;

@@ -119,8 +119,10 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       direccion: 'Av. Siempre Viva 742',
       cp: '1000',
       alias: 'Casa',
+      localidad: 'Springfield',
       adicionales: 'Dpto A',
-      principal: true
+      principal: true,
+      activo: true
     },
     {
       idDireccion: 2,
@@ -129,8 +131,10 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       direccion: 'Av. Siempre Viva 744',
       cp: '1000',
       alias: 'Trabajo',
+      localidad: 'Springfield',
       adicionales: 'Dpto B',
-      principal: false
+      principal: false,
+      activo: true
     }];
     await Direccion.bulkCreate(direcciones, { ignoreDuplicates: true });
     const dirUser = direcciones[0];
