@@ -23,6 +23,16 @@ async function findOne(where) {
   return row ? row.get({ plain: true }) : null;
 }
 
+async function findByUserId(idUsuario) {
+  const row = await Perfil.findOne({
+    where: { idUsuario },
+    include: [
+      { model: Usuario, as: "usuario", attributes: ["idUsuario", "email"] }
+    ]
+  });
+  return row ? row.get({ plain: true }) : null;
+}
+
 async function create(data) {
   const row = await Perfil.create(data);
   return row.get({ plain: true });
@@ -47,4 +57,5 @@ module.exports = {
   create,
   update,
   remove,
+  findByUserId,
 };
