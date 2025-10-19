@@ -4,6 +4,7 @@ const bancoService = require("../services/banco");
 const productoService = require("../services/producto");
 const tarjetaService = require("../services/tarjeta");
 const perfilService = require("../services/perfil");
+const pedidoService = require("../services/pedido");
 const ResponseBuilder = require("../utils/api-response");
 
 const getAccountAddressesController = async (req, res) => {
@@ -192,6 +193,20 @@ const putProfileController = async (req, res) => {
     }
 };
 
+const getOrdersController = async (req, res) => {
+    try {
+    const orders = await pedidoService.getOrdersByUserService(req);
+        res
+            .status(200)
+            .json(
+                ResponseBuilder.success(orders, "Pedidos consultados exitosamente")
+            );
+    } catch (err) {
+        const status = err.statusCode || 500;
+        res.status(status).json(ResponseBuilder.error(err.message, status));
+    }
+};
+
 module.exports = {
     getAccountAddressesController,
     getFavoritesController,
@@ -206,4 +221,5 @@ module.exports = {
     getCardsOptionsController,
     getProfileController,
     putProfileController,
+    getOrdersController,
 };

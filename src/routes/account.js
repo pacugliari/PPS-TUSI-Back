@@ -14,7 +14,8 @@ const {
 	deleteCardsController,
 	getCardsOptionsController,
 	getProfileController,
-	putProfileController
+	putProfileController,
+	getOrdersController
 } = require("../controllers/account");
 
 //DIRECCIONES
@@ -37,5 +38,8 @@ router.delete("/cards/:id", deleteCardsController);
 //PROFILE
 router.get("/profile", getProfileController);
 router.put("/profile", putProfileController);
+
+//ORDERS
+router.get("/orders", getOrdersController);
 
 module.exports = router;
