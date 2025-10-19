@@ -13,7 +13,8 @@ const {
 	postCardsController,
 	deleteCardsController,
 	getCardsOptionsController,
-	getProfileController
+	getProfileController,
+	putProfileController
 } = require("../controllers/account");
 
 //DIRECCIONES
@@ -35,5 +36,6 @@ router.delete("/cards/:id", deleteCardsController);
 
 //PROFILE
 router.get("/profile", getProfileController);
+router.put("/profile", putProfileController);
 
 module.exports = router;

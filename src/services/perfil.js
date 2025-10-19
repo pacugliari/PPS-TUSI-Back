@@ -89,6 +89,41 @@ const getProfileService = async (req) => {
   };
 };
 
+const putProfileService = async (req) => {
+  const idUsuario = req.user.id;
+  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
+
+  const { nombre, email, telefono, tipoDoc, dni } = req.body;
+
+  const perfil = await perfilRepository.findByUserId(idUsuario);
+  if (!perfil) throw new HttpError(404, "Perfil no encontrado");
+
+  await perfilRepository.update(perfil.idPerfil, {
+    ...(nombre && { nombre }),
+    ...(telefono && { telefono }),
+    ...(tipoDoc && { tipoDocumento: tipoDoc }),
+    ...(dni && { dni })
+  });
+
+  // Actualizar email en Usuario si se envía
+  if (email) {
+    const { Usuario } = require("../models");
+    await Usuario.update({ email }, { where: { idUsuario } });
+  }
+
+  // Obtener datos actualizados
+  const perfilActualizado = await perfilRepository.findByUserId(idUsuario);
+
+  return {
+    nroCliente: perfilActualizado.idUsuario,
+    nombre: perfilActualizado.nombre,
+    email: perfilActualizado.usuario?.email || null,
+    telefono: perfilActualizado.telefono,
+    tipoDoc: perfilActualizado.tipoDocumento,
+    dni: perfilActualizado.dni
+  };
+};
+
 module.exports = {
   getAllService,
   getByIdService,
@@ -96,4 +131,5 @@ module.exports = {
   updateService,
   deleteService,
   getProfileService,
+  putProfileService,
 };
