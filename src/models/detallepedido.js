@@ -6,6 +6,7 @@ module.exports = (sequelize) => {
     idPedido: { type: DataTypes.INTEGER, allowNull: false },
     idProducto: { type: DataTypes.INTEGER, allowNull: false },
     cantidad: { type: DataTypes.INTEGER, allowNull: false },
+    precio: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
   }, { tableName: 'DetallesPedido', timestamps: true });
   return DetallePedido;
 };

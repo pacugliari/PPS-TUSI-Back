@@ -15,7 +15,8 @@ const {
 	getCardsOptionsController,
 	getProfileController,
 	putProfileController,
-	getOrdersController
+	getOrdersController,
+	getOrderDetailController
 } = require("../controllers/account");
 
 //DIRECCIONES
@@ -41,5 +42,6 @@ router.put("/profile", putProfileController);
 
 //ORDERS
 router.get("/orders", getOrdersController);
+router.get("/orders/:id", getOrderDetailController);
 
 module.exports = router;

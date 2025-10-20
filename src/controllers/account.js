@@ -131,6 +131,23 @@ const getCardsController = async (req, res) => {
     }
 };
 
+const getOrderDetailController = async (req, res) => {
+    try {
+        const detail = await pedidoService.getOrderDetailByIdService(req);
+        res
+            .status(200)
+            .json(
+                ResponseBuilder.success(
+                    detail,
+                    "Detalle de pedido consultado exitosamente"
+                )
+            );
+    } catch (err) {
+        const status = err.statusCode || 500;
+        res.status(status).json(ResponseBuilder.error(err.message, status));
+    }
+};
+
 const postCardsController = async (req, res) => {
     try {
         const result = await tarjetaService.createService(req);
@@ -195,7 +212,7 @@ const putProfileController = async (req, res) => {
 
 const getOrdersController = async (req, res) => {
     try {
-    const orders = await pedidoService.getOrdersByUserService(req);
+        const orders = await pedidoService.getOrdersByUserService(req);
         res
             .status(200)
             .json(
@@ -222,4 +239,5 @@ module.exports = {
     getProfileController,
     putProfileController,
     getOrdersController,
+    getOrderDetailController,
 };
