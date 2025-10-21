@@ -27,8 +27,40 @@ async function findByUserId(idUsuario) {
   return rows.map(r => r.get({ plain: true }));
 }
 
+// Pedido por id para un usuario, con items (DetallePedido + Producto)
+async function findByIdAndUserWithItems(idPedido, idUsuario) {
+  const row = await Pedido.findOne({
+    where: { idPedido, idUsuario },
+    attributes: [
+      'idPedido',
+      ['createdAt', 'fecha'],
+      'estado',
+      'impuestos',
+      'subtotal',
+      'total',
+      'formaPago'
+    ],
+    include: [
+      {
+        model: DetallePedido,
+        as: 'detalles',
+        attributes: ['idDetallePedido', 'cantidad', 'precio'],
+        include: [
+          {
+            model: Producto,
+            as: 'producto',
+            attributes: ['idProducto', 'nombre']
+          }
+        ]
+      }
+    ]
+  });
+  return row ? row.get({ plain: true }) : null;
+}
+
 module.exports = {
   findAll,
   findById,
-  findByUserId
+  findByUserId,
+  findByIdAndUserWithItems,
 };

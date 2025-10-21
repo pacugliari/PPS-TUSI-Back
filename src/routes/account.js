@@ -2,50 +2,51 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getAccountAddressesController,
-  postAccountAddressController,
-  putAccountAddressController,
-  deleteAccountAddressController,
-  setPrimaryAddressController,
-  getFavoritesController,
-  getAccountAddressesOptionsController,
-  getCardsController,
-  postCardsController,
-  deleteCardsController,
-  getCardsOptionsController,
-  getProfileController,
-  putProfileController,
-  getOrdersController,
+	getAccountAddressesController,
+	postAccountAddressController,
+	putAccountAddressController,
+	deleteAccountAddressController,
+	setPrimaryAddressController,
+	getFavoritesController,
+	getAccountAddressesOptionsController,
+	getCardsController,
+	postCardsController,
+	deleteCardsController,
+	getCardsOptionsController,
+	getProfileController,
+	putProfileController,
+	getOrdersController,
+	getOrderDetailController
 } = require("../controllers/account");
 
 const {
-  getAllController,
-  getOptionsController,
-  createController,
-  deleteController,
-  updateController,
+	getAllController,
+	getOptionsController,
+	createController,
+	deleteController,
+	updateController,
 } = require("../controllers/cupon");
 
 const {
-  getAllController: getAllZonesController,
-  createController: createZonesController,
-  deleteController: deleteZonesController,
-  updateController: updateZonesController,
+	getAllController: getAllZonesController,
+	createController: createZonesController,
+	deleteController: deleteZonesController,
+	updateController: updateZonesController,
 } = require("../controllers/zona");
 
 const {
-  getAllController: getAllBanksController,
-  createController: createBanksController,
-  deleteController: deleteBanksController,
-  updateController: updateBanksController,
+	getAllController: getAllBanksController,
+	createController: createBanksController,
+	deleteController: deleteBanksController,
+	updateController: updateBanksController,
 } = require("../controllers/banco");
 
 const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
 
 router.use(
-  ["/addresses", "/favorites", "/cards", "/profile", "/orders"],
-  requireAnyRole(ROLES.USUARIO)
+	["/addresses", "/favorites", "/cards", "/profile", "/orders"],
+	requireAnyRole(ROLES.USUARIO)
 );
 
 // DIRECCIONES
@@ -71,6 +72,7 @@ router.put("/profile", putProfileController);
 
 // ORDERS
 router.get("/orders", getOrdersController);
+router.get("/orders/:id", getOrderDetailController);
 
 // ADMIN y OPERARIO
 router.use("/coupons", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));

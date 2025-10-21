@@ -247,8 +247,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       });
 
       detallesData.push(
-        { idDetallePedido: i * 2 - 1, idPedido: i, idProducto: p1.idProducto, cantidad: cant1 },
-        { idDetallePedido: i * 2, idPedido: i, idProducto: p2.idProducto, cantidad: cant2 },
+        { idDetallePedido: i * 2 - 1, idPedido: i, idProducto: p1.idProducto, cantidad: cant1, precio: p1.precio },
+        { idDetallePedido: i * 2, idPedido: i, idProducto: p2.idProducto, cantidad: cant2, precio: p2.precio },
       );
 
       if (electronico) {
