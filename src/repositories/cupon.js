@@ -1,10 +1,23 @@
-const { Cupon, Usuario } = require("../models");
+const { Cupon, Usuario, Perfil } = require("../models");
 
 async function findAll() {
   const rows = await Cupon.findAll({
+    where: { activo: true },
     include: [
-      { model: Usuario, as: "usuario", attributes: ['idUsuario', 'email'] }
-    ]
+      {
+        model: Usuario,
+        as: "usuario",
+        attributes: ["idUsuario", "email"],
+        include: [
+          {
+            model: Perfil,
+            as: "perfil",
+            attributes: ["nombre", "dni", "telefono"],
+            required: false,
+          },
+        ],
+      },
+    ],
   });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
@@ -12,16 +25,19 @@ async function findAll() {
 async function findById(id) {
   const row = await Cupon.findByPk(id, {
     include: [
-      { model: Usuario, as: "usuario", attributes: ['idUsuario', 'email'] }
-    ]
+      { model: Usuario, as: "usuario", attributes: ["idUsuario", "email"] },
+    ],
   });
   return row ? row.get({ plain: true }) : null;
 }
 
 async function findOne(where) {
-  const row = await Cupon.findOne({ where });
+  const row = await Cupon.findOne({
+    where: { activo: true, ...where },
+  });
   return row ? row.get({ plain: true }) : null;
 }
+
 
 async function create(data) {
   const row = await Cupon.create(data);
@@ -30,7 +46,7 @@ async function create(data) {
 
 async function update(id, data) {
   const [updated] = await Cupon.update(data, {
-    where: { idCupon: id }
+    where: { idCupon: id },
   });
   if (!updated) return null;
   return await findById(id);

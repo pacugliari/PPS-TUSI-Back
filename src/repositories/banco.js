@@ -1,7 +1,7 @@
 const { Banco } = require("../models");
 
 async function findAll() {
-  const rows = await Banco.findAll();
+  const rows = await Banco.findAll({ where: { activo: true } });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
 
@@ -11,7 +11,12 @@ async function findById(id) {
 }
 
 async function findOne(where) {
-  const row = await Banco.findOne({ where });
+  const row = await Banco.findOne({
+    where: {
+      ...where,
+      activo: true,
+    },
+  });
   return row ? row.get({ plain: true }) : null;
 }
 
@@ -22,7 +27,7 @@ async function create(data) {
 
 async function update(id, data) {
   const [updated] = await Banco.update(data, {
-    where: { idBanco: id }
+    where: { idBanco: id },
   });
   if (!updated) return null;
   return await findById(id);
@@ -38,5 +43,5 @@ module.exports = {
   findOne,
   create,
   update,
-  remove
+  remove,
 };

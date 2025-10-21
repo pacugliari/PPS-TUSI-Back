@@ -1,5 +1,7 @@
 const HttpError = require("../utils/http-error");
 const cuponRepository = require("../repositories/cupon");
+const usuarioRepository = require("../repositories/usuario");
+const { ROLES } = require("../constants/roles");
 
 const getAllService = async (req) => {
   try {
@@ -18,23 +20,30 @@ const getByIdService = async (req) => {
 };
 
 const createService = async (req) => {
-  const { idUsuario, monto, codigo, fechaDesde, fechaHasta } = req.body;
+  const { idUsuario, porcentaje, codigo, fechaDesde, fechaHasta } = req.body;
 
   // Validaciones
-  if (!idUsuario || !monto || !codigo || !fechaDesde || !fechaHasta) {
+  if (
+    !idUsuario ||
+    porcentaje === undefined ||
+    porcentaje === null ||
+    !codigo ||
+    !fechaDesde ||
+    !fechaHasta
+  ) {
     throw new HttpError(400, "Faltan campos requeridos").setErrors([
       ...(!idUsuario ? [{ idUsuario: "El ID de usuario es requerido" }] : []),
-      ...(!monto ? [{ monto: "El monto es requerido" }] : []),
+      ...(!porcentaje ? [{ porcentaje: "El porcentaje es requerido" }] : []),
       ...(!codigo ? [{ codigo: "El código es requerido" }] : []),
       ...(!fechaDesde ? [{ fechaDesde: "La fecha desde es requerida" }] : []),
-      ...(!fechaHasta ? [{ fechaHasta: "La fecha hasta es requerida" }] : [])
+      ...(!fechaHasta ? [{ fechaHasta: "La fecha hasta es requerida" }] : []),
     ]);
   }
 
   // Validar que fechaHasta sea posterior a fechaDesde
-  if (new Date(fechaHasta) <= new Date(fechaDesde)) {
+  if (new Date(fechaHasta) < new Date(fechaDesde)) {
     throw new HttpError(400, "Fechas inválidas").setErrors([
-      { fechas: "La fecha hasta debe ser posterior a la fecha desde" }
+      { fechas: "La fecha hasta debe ser posterior a la fecha desde" },
     ]);
   }
 
@@ -42,30 +51,30 @@ const createService = async (req) => {
   const existingCupon = await cuponRepository.findOne({ codigo });
   if (existingCupon) {
     throw new HttpError(400, "Ya existe un cupón con ese código").setErrors([
-      { codigo: "El código del cupón ya está en uso" }
+      { codigo: "El código del cupón ya está en uso" },
     ]);
   }
 
   const cupon = await cuponRepository.create({
     idUsuario,
-    monto,
-    codigo,
+    porcentaje,
+    codigo: codigo.toUpperCase(),
     fechaDesde,
-    fechaHasta
+    fechaHasta,
   });
   return { data: cupon };
 };
 
 const updateService = async (req) => {
   const { id } = req.params;
-  const { monto, codigo, fechaDesde, fechaHasta } = req.body;
+  const { porcentaje, codigo, fechaDesde, fechaHasta } = req.body;
 
   const cupon = await cuponRepository.findById(id);
   if (!cupon) throw new HttpError(404, "Cupón no encontrado");
 
-  if (!monto && !codigo && !fechaDesde && !fechaHasta) {
+  if (!porcentaje && !codigo && !fechaDesde && !fechaHasta) {
     throw new HttpError(400, "No hay campos para actualizar").setErrors([
-      { body: "Debe proporcionar al menos un campo para actualizar" }
+      { body: "Debe proporcionar al menos un campo para actualizar" },
     ]);
   }
 
@@ -74,7 +83,7 @@ const updateService = async (req) => {
     const existingCupon = await cuponRepository.findOne({ codigo });
     if (existingCupon) {
       throw new HttpError(400, "Ya existe un cupón con ese código").setErrors([
-        { codigo: "El código del cupón ya está en uso" }
+        { codigo: "El código del cupón ya está en uso" },
       ]);
     }
   }
@@ -83,18 +92,18 @@ const updateService = async (req) => {
   if (fechaDesde || fechaHasta) {
     const newFechaDesde = fechaDesde || cupon.fechaDesde;
     const newFechaHasta = fechaHasta || cupon.fechaHasta;
-    if (new Date(newFechaHasta) <= new Date(newFechaDesde)) {
+    if (new Date(newFechaHasta) < new Date(newFechaDesde)) {
       throw new HttpError(400, "Fechas inválidas").setErrors([
-        { fechas: "La fecha hasta debe ser posterior a la fecha desde" }
+        { fechas: "La fecha hasta debe ser posterior a la fecha desde" },
       ]);
     }
   }
 
   const updatedCupon = await cuponRepository.update(id, {
-    ...(monto && { monto }),
-    ...(codigo && { codigo }),
+    ...(porcentaje && { porcentaje }),
+    ...(codigo && { codigo: codigo.toUpperCase() }),
     ...(fechaDesde && { fechaDesde }),
-    ...(fechaHasta && { fechaHasta })
+    ...(fechaHasta && { fechaHasta }),
   });
 
   return { data: updatedCupon };
@@ -104,8 +113,28 @@ const deleteService = async (req) => {
   const { id } = req.params;
   const cupon = await cuponRepository.findById(id);
   if (!cupon) throw new HttpError(404, "Cupón no encontrado");
-  await cuponRepository.remove(id);
-  return true;
+
+  const updatedCupon = await cuponRepository.update(id, { activo: false });
+
+  return { data: updatedCupon };
+};
+
+const getOptionsService = async () => {
+  try {
+    const { rows } = await usuarioRepository.findAll();
+
+    return rows
+      .filter((u) => u.rol.tipo === ROLES.USUARIO)
+      .map((u) => ({
+        idUsuario: u.idUsuario,
+        nombre: u.perfil?.nombre || u.email || `Usuario ${u.idUsuario}`,
+        email: u.email ?? null,
+        dni: u.perfil?.dni ?? null,
+        telefono: u.perfil?.telefono ?? null,
+      }));
+  } catch (err) {
+    throw new HttpError(500, "No se pudieron obtener las opciones de cupones");
+  }
 };
 
 module.exports = {
@@ -114,4 +143,5 @@ module.exports = {
   createService,
   updateService,
   deleteService,
+  getOptionsService,
 };
