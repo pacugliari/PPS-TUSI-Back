@@ -148,8 +148,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     const en30 = new Date(hoy.getTime() + 30 * 24 * 60 * 60 * 1000);
 
     await Cupon.bulkCreate([
-      { idCupon: 1, idUsuario: userId, monto: 10, codigo: 'BIENVENIDA10', fechaDesde: hoy, fechaHasta: en30 },
-      { idCupon: 2, idUsuario: userId, monto: 0, codigo: 'ENVIOGRATIS', fechaDesde: hoy, fechaHasta: en30 },
+      { idCupon: 1, idUsuario: userId, porcentaje: 10, codigo: 'BIENVENIDA10', fechaDesde: hoy, fechaHasta: en30, activo: true },
+      { idCupon: 2, idUsuario: userId, porcentaje: 0,  codigo: 'ENVIOGRATIS',  fechaDesde: hoy, fechaHasta: en30, activo: true },
     ], { ignoreDuplicates: true });
 
     await PromocionBancaria.bulkCreate([

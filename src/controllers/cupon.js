@@ -10,6 +10,15 @@ const getAllController = async (req, res) => {
   );
 };
 
+const getOptionsController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await cuponService.getOptionsService(req),
+      "Opciones de cupones consultadas exitosamente"
+    )
+  );
+};
+
 const getByIdController = async (req, res) => {
   res.status(200).json(
     ResponseBuilder.success(
@@ -50,4 +59,5 @@ module.exports = {
   createController,
   updateController,
   deleteController,
+  getOptionsController
 };
