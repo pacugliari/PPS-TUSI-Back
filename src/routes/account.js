@@ -33,6 +33,13 @@ const {
   updateController: updateZonesController,
 } = require("../controllers/zona");
 
+const {
+  getAllController: getAllBanksController,
+  createController: createBanksController,
+  deleteController: deleteBanksController,
+  updateController: updateBanksController,
+} = require("../controllers/banco");
+
 const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
 
@@ -80,5 +87,12 @@ router.get("/zones", getAllZonesController);
 router.post("/zones", createZonesController);
 router.put("/zones/:id", updateZonesController);
 router.delete("/zones/:id", deleteZonesController);
+
+router.use("/banks", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/banks", getAllBanksController);
+router.post("/banks", createBanksController);
+router.put("/banks/:id", updateBanksController);
+router.delete("/banks/:id", deleteBanksController);
 
 module.exports = router;

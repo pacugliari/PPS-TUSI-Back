@@ -26,7 +26,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
      * ========================= */
     await Banco.bulkCreate(
       ['Nacion', 'Provincia', 'Ciudad', 'Patagonia', 'Galicia', 'Santander', 'BBVA', 'Macro', 'HSBC', 'ICBC']
-        .map((nombre, i) => ({ idBanco: i + 1, nombre })),
+        .map((nombre, i) => ({ idBanco: i + 1, nombre , activo: true })),
       { ignoreDuplicates: true }
     );
 

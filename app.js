@@ -93,12 +93,7 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   tarjetaRoutes
 );
-app.use(
-  "/api/cupones",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  cuponRoutes
-);
+
 app.use(
   "/api/promocionesbancarias",
   auth,
@@ -111,18 +106,7 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   propiedadRoutes
 );
-app.use(
-  "/api/roles",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  rolRoutes
-);
-app.use(
-  "/api/zonas",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  zonaRoutes
-);
+
 app.use(
   "/api/comentarios",
   auth,
@@ -142,16 +126,8 @@ app.use(
   caracteristicasRoutes
 );
 app.use("/api/auth", authRoutes);
-app.use(
-  "/api/productos",
-  productosRoutes
-);
-app.use(
-  "/api/bancos",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  bancosRoutes
-);
+app.use("/api/productos", productosRoutes);
+
 app.use(
   "/api/detallepedidos",
   auth,
@@ -189,11 +165,7 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   pedidoRoutes
 );
-app.use(
-  "/api/account",
-  auth,
-  accountRoutes
-);
+app.use("/api/account", auth, accountRoutes);
 // Handler de errores (al final)
 app.use(errorHandler);
 
