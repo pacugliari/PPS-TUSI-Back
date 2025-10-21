@@ -68,7 +68,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         nombre: `Zona ${i + 1}`,
         ciudad: ciudad[i],
         provincia: provincia[i],
-        costoEnvio: 300 + i * 25
+        costoEnvio: 300 + i * 25,
+        activo: true,
       })),
       { ignoreDuplicates: true }
     );

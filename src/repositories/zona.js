@@ -1,7 +1,7 @@
 const { Zona } = require("../models");
 
 async function findAll() {
-  const rows = await Zona.findAll();
+  const rows = await Zona.findAll({ where: { activo: true } });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
 
@@ -18,7 +18,7 @@ async function create(data) {
 
 async function update(id, data) {
   const [updated] = await Zona.update(data, {
-    where: { idZona: id }
+    where: { idZona: id },
   });
   if (!updated) return null;
   return await findById(id);
@@ -33,5 +33,5 @@ module.exports = {
   findById,
   create,
   update,
-  remove
+  remove,
 };

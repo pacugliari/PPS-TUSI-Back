@@ -18,7 +18,20 @@ const {
   getOrdersController,
 } = require("../controllers/account");
 
-const { getAllController,getOptionsController,createController,deleteController, updateController} = require("../controllers/cupon");
+const {
+  getAllController,
+  getOptionsController,
+  createController,
+  deleteController,
+  updateController,
+} = require("../controllers/cupon");
+
+const {
+  getAllController: getAllZonesController,
+  createController: createZonesController,
+  deleteController: deleteZonesController,
+  updateController: updateZonesController,
+} = require("../controllers/zona");
 
 const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
@@ -60,5 +73,12 @@ router.get("/coupons/options", getOptionsController);
 router.post("/coupons", createController);
 router.put("/coupons/:id", updateController);
 router.delete("/coupons/:id", deleteController);
+
+router.use("/zones", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/zones", getAllZonesController);
+router.post("/zones", createZonesController);
+router.put("/zones/:id", updateZonesController);
+router.delete("/zones/:id", deleteZonesController);
 
 module.exports = router;

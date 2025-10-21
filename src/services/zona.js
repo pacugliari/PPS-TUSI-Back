@@ -13,37 +13,65 @@ const getAllService = async (req) => {
 const getByIdService = async (req) => {
   const { id } = req.params;
   const zona = await zonaRepository.findById(id);
-  if (!zona) throw new HttpError(404, "Zona no encontrada");
+  if (!zona || zona.activo === false) {
+    throw new HttpError(404, "Zona no encontrada");
+  }
   return { data: zona };
 };
 
 const createService = async (req) => {
-  const { nombre } = req.body;
+  const { nombre, ciudad, provincia, costoEnvio } = req.body;
+
   if (!nombre) {
     throw new HttpError(400, "El nombre es requerido");
   }
-  const zona = await zonaRepository.create({ nombre });
-  return zona;
+
+  const zona = await zonaRepository.create({
+    nombre,
+    ciudad,
+    provincia,
+    costoEnvio,
+    activo: true,
+  });
+
+  return { data: zona };
 };
 
 const updateService = async (req) => {
   const { id } = req.params;
-  const { nombre } = req.body;
-  if (!nombre) {
-    throw new HttpError(400, "El nombre es requerido para actualizar");
-  }
+  const { nombre, ciudad, provincia, costoEnvio } = req.body;
+
   const zonaExistente = await zonaRepository.findById(id);
-  if (!zonaExistente) throw new HttpError(404, "Zona no encontrada");
-  const zona = await zonaRepository.update(id, { nombre });
-  return zona;
+  if (!zonaExistente || zonaExistente.activo === false) {
+    throw new HttpError(404, "Zona no encontrada");
+  }
+
+  if (!nombre && !ciudad && !provincia && costoEnvio === undefined) {
+    throw new HttpError(400, "No hay campos para actualizar").setErrors([
+      { body: "Debe proporcionar al menos un campo para actualizar" },
+    ]);
+  }
+
+  const zona = await zonaRepository.update(id, {
+    ...(nombre && { nombre }),
+    ...(ciudad && { ciudad }),
+    ...(provincia && { provincia }),
+    ...(costoEnvio !== undefined && { costoEnvio }),
+  });
+
+  return { data: zona };
 };
 
 const deleteService = async (req) => {
   const { id } = req.params;
   const zona = await zonaRepository.findById(id);
-  if (!zona) throw new HttpError(404, "Zona no encontrada");
-  await zonaRepository.remove(id);
-  return true;
+
+  if (!zona || zona.activo === false) {
+    throw new HttpError(404, "Zona no encontrada");
+  }
+
+  const updatedZona = await zonaRepository.update(id, { activo: false });
+  return { data: updatedZona };
 };
 
 module.exports = {
@@ -51,5 +79,5 @@ module.exports = {
   getByIdService,
   createService,
   updateService,
-  deleteService
+  deleteService,
 };
