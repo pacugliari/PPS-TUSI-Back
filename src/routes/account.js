@@ -41,6 +41,14 @@ const {
 	updateController: updateBanksController,
 } = require("../controllers/banco");
 
+const {
+  getAllController: getAllBankPromosController,
+  createController: createBankPromosController,
+  deleteController: deleteBankPromosController,
+  updateController: updateBankPromosController,
+  getOptionsController: getBankPromosOptionsController
+} = require("../controllers/promocionbancaria");
+
 const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
 
@@ -96,5 +104,13 @@ router.get("/banks", getAllBanksController);
 router.post("/banks", createBanksController);
 router.put("/banks/:id", updateBanksController);
 router.delete("/banks/:id", deleteBanksController);
+
+router.use("/bank-promos", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/bank-promos", getAllBankPromosController);
+router.get("/bank-promos/options", getBankPromosOptionsController);
+router.post("/bank-promos", createBankPromosController);
+router.put("/bank-promos/:id", updateBankPromosController);
+router.delete("/bank-promos/:id", deleteBankPromosController);
 
 module.exports = router;

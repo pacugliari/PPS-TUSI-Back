@@ -154,8 +154,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     ], { ignoreDuplicates: true });
 
     await PromocionBancaria.bulkCreate([
-      { idPromocionBancaria: 1, idBanco: 5, nombre: '12 cuotas sin interés', fechaDesde: hoy, fechaHasta: en30, dias: ['viernes', 'sabado', 'domingo'] },
-      { idPromocionBancaria: 2, idBanco: 6, nombre: '15% off con Mastercard', fechaDesde: hoy, fechaHasta: en30, dias: ['lunes', 'martes', 'miercoles', 'jueves'] },
+      { idPromocionBancaria: 1, idBanco: 5, nombre: '12 cuotas sin interés',porcentaje: 12.00, fechaDesde: hoy, fechaHasta: en30, dias: ['viernes', 'sabado', 'domingo'] ,activo: true},
+      { idPromocionBancaria: 2, idBanco: 6, nombre: '15% off con Mastercard',porcentaje: 15.00, fechaDesde: hoy, fechaHasta: en30, dias: ['lunes', 'martes', 'miercoles', 'jueves'],activo: true },
     ], { ignoreDuplicates: true });
 
     /* =========================

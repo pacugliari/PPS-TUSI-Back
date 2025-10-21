@@ -95,12 +95,6 @@ app.use(
 );
 
 app.use(
-  "/api/promocionesbancarias",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  promocionBancariaRoutes
-);
-app.use(
   "/api/propiedades",
   auth,
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),

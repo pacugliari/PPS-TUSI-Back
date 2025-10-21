@@ -1,7 +1,10 @@
 const { Banco } = require("../models");
 
 async function findAll() {
-  const rows = await Banco.findAll({ where: { activo: true } });
+  const rows = await Banco.findAll({
+    where: { activo: true },
+    attributes: { exclude: ["activo"] },
+  });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
 
