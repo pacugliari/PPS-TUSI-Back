@@ -42,6 +42,13 @@ const {
 } = require("../controllers/banco");
 
 const {
+	getAllController: getAllBrandsController,
+	createController: createBrandsController,
+	deleteController: deleteBrandsController,
+	updateController: updateBrandsController,
+} = require("../controllers/marca");
+
+const {
   getAllController: getAllBankPromosController,
   createController: createBankPromosController,
   deleteController: deleteBankPromosController,
@@ -112,5 +119,12 @@ router.get("/bank-promos/options", getBankPromosOptionsController);
 router.post("/bank-promos", createBankPromosController);
 router.put("/bank-promos/:id", updateBankPromosController);
 router.delete("/bank-promos/:id", deleteBankPromosController);
+
+router.use("/brands", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/brands", getAllBrandsController);
+router.post("/brands", createBrandsController);
+router.put("/brands/:id", updateBrandsController);
+router.delete("/brands/:id", deleteBrandsController);
 
 module.exports = router;

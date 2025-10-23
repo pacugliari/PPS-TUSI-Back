@@ -85,7 +85,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
     await Marca.bulkCreate(
       ['Acer', 'Asus', 'Lenovo', 'HP', 'Dell', 'Logitech', 'MSI', 'Gigabyte', 'Kingston', 'Samsung']
-        .map((nombre, i) => ({ idMarca: i + 1, nombre, descripcion: `Marca ${nombre}` })),
+        .map((nombre, i) => ({ idMarca: i + 1, nombre, descripcion: `Marca ${nombre}`,activo:true })),
       { ignoreDuplicates: true }
     );
 

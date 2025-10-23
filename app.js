@@ -57,41 +57,12 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   subcategoriaRoutes
 );
-app.use(
-  "/api/marcas",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  marcaRoutes
-);
+
 app.use(
   "/api/stocks",
   auth,
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   stockRoutes
-);
-app.use(
-  "/api/usuarios",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  usuarioRoutes
-);
-app.use(
-  "/api/perfiles",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  perfilRoutes
-);
-app.use(
-  "/api/direcciones",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  direccionRoutes
-);
-app.use(
-  "/api/tarjetas",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  tarjetaRoutes
 );
 
 app.use(
@@ -122,12 +93,6 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/productos", productosRoutes);
 
-app.use(
-  "/api/detallepedidos",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  detallepedidoRoutes
-);
 app.use("/api/home", homeRoutes);
 app.use(
   "/api/devoluciones",
@@ -160,6 +125,7 @@ app.use(
   pedidoRoutes
 );
 app.use("/api/account", auth, accountRoutes);
+
 // Handler de errores (al final)
 app.use(errorHandler);
 
