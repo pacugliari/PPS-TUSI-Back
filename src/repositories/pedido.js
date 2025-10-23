@@ -49,7 +49,7 @@ async function findByIdAndUserWithItems(idPedido, idUsuario) {
           {
             model: Producto,
             as: 'producto',
-            attributes: ['idProducto', 'nombre']
+            attributes: ['idProducto', 'nombre','iva']
           }
         ]
       }
