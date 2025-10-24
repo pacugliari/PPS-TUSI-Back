@@ -79,7 +79,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     await Categoria.bulkCreate(categorias, { ignoreDuplicates: true });
 
     await SubCategoria.bulkCreate(
-      Array.from({ length: 10 }, (_, i) => ({ idSubCategoria: i + 1, idCategoria: (i % 10) + 1, nombre: `Subcat ${i + 1}`, descripcion: `Subcategoria ${i + 1}` })),
+      Array.from({ length: 10 }, (_, i) => ({ idSubCategoria: i + 1, idCategoria: (i % 10) + 1, nombre: `Subcat ${i + 1}`, descripcion: `Subcategoria ${i + 1}`, activo: true})),
       { ignoreDuplicates: true }
     );
 

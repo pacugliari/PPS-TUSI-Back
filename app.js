@@ -52,13 +52,6 @@ app.use(corsMiddleware);
 
 // Rutas
 app.use(
-  "/api/subcategorias",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  subcategoriaRoutes
-);
-
-app.use(
   "/api/stocks",
   auth,
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),

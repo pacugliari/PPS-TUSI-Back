@@ -56,6 +56,14 @@ const {
 } = require("../controllers/categoria");
 
 const {
+  getAllController: getAllSubcategoriesController,
+  createController: createSubcategoriesController,
+  deleteController: deleteSubcategoriesController,
+  updateController: updateSubcategoriesController,
+  getOptionsController: getSubcategoriesOptionsController,
+} = require("../controllers/subcategoria");
+
+const {
   getAllController: getAllFeaturesController,
   createController: createFeaturesController,
   deleteController: deleteFeaturesController,
@@ -154,5 +162,13 @@ router.get("/features", getAllFeaturesController);
 router.post("/features", createFeaturesController);
 router.put("/features/:id", updateFeaturesController);
 router.delete("/features/:id", deleteFeaturesController);
+
+router.use("/subcategories", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/subcategories", getAllSubcategoriesController);
+router.get("/subcategories/options", getSubcategoriesOptionsController);
+router.post("/subcategories", createSubcategoriesController);
+router.put("/subcategories/:id", updateSubcategoriesController);
+router.delete("/subcategories/:id", deleteSubcategoriesController);
 
 module.exports = router;
