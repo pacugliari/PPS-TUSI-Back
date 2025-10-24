@@ -78,12 +78,6 @@ app.use(
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   comentariosRoutes
 );
-app.use(
-  "/api/caracteristicas",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  caracteristicasRoutes
-);
 app.use("/api/auth", authRoutes);
 app.use("/api/productos", productosRoutes);
 

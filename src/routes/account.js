@@ -56,6 +56,13 @@ const {
 } = require("../controllers/categoria");
 
 const {
+  getAllController: getAllFeaturesController,
+  createController: createFeaturesController,
+  deleteController: deleteFeaturesController,
+  updateController: updateFeaturesController,
+} = require("../controllers/caracteristica");
+
+const {
   getAllController: getAllBankPromosController,
   createController: createBankPromosController,
   deleteController: deleteBankPromosController,
@@ -140,5 +147,12 @@ router.get("/categories", getAllCategoriesController);
 router.post("/categories", createCategoriesController);
 router.put("/categories/:id", updateCategoriesController);
 router.delete("/categories/:id", deleteCategoriesController);
+
+router.use("/features", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/features", getAllFeaturesController);
+router.post("/features", createFeaturesController);
+router.put("/features/:id", updateFeaturesController);
+router.delete("/features/:id", deleteFeaturesController);
 
 module.exports = router;

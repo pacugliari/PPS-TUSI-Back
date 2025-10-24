@@ -91,7 +91,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
     await Caracteristica.bulkCreate(
       ['Color', 'Peso', 'Dimensiones', 'Capacidad', 'Velocidad', 'Material', 'Garantía', 'Potencia', 'Compatibilidad', 'Modelo']
-        .map((descripcion, i) => ({ idCaracteristica: i + 1, descripcion })),
+        .map((descripcion, i) => ({ idCaracteristica: i + 1, descripcion ,activo: true})),
       { ignoreDuplicates: true }
     );
 

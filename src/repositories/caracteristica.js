@@ -1,7 +1,10 @@
 const { Caracteristica } = require("../models");
 
 async function findAll() {
-  const rows = await Caracteristica.findAll();
+  const rows = await Caracteristica.findAll({
+    where: { activo: true },
+    attributes: { exclude: ["activo"] },
+  });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
 
@@ -16,9 +19,19 @@ async function create(data) {
   return created;
 }
 
+async function findOne(where) {
+  const row = await Caracteristica.findOne({
+    where: {
+      ...where,
+      activo: true,
+    },
+  });
+  return row ? row.get({ plain: true }) : null;
+}
+
 async function update(id, data) {
   const [updated] = await Caracteristica.update(data, {
-    where: { idCaracteristica: id }
+    where: { idCaracteristica: id },
   });
   if (!updated) return null;
   return await findById(id);
@@ -33,5 +46,6 @@ module.exports = {
   findById,
   create,
   update,
-  remove
+  remove,
+  findOne,
 };
