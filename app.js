@@ -79,12 +79,6 @@ app.use(
   comentariosRoutes
 );
 app.use(
-  "/api/categorias",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  categoriasRoutes
-);
-app.use(
   "/api/caracteristicas",
   auth,
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),

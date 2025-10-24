@@ -75,7 +75,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     );
 
     const categorias = ['Notebooks', 'PCs', 'Monitores', 'Periféricos', 'Audio', 'Conectividad', 'Almacenamiento', 'Impresión', 'Gaming', 'Accesorios']
-      .map((nombre, i) => ({ idCategoria: i + 1, nombre, descripcion: `Categoria ${nombre}` }));
+      .map((nombre, i) => ({ idCategoria: i + 1, nombre, descripcion: `Categoria ${nombre}`,activo: true }));
     await Categoria.bulkCreate(categorias, { ignoreDuplicates: true });
 
     await SubCategoria.bulkCreate(

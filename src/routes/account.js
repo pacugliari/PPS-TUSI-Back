@@ -2,66 +2,73 @@ const express = require("express");
 const router = express.Router();
 
 const {
-	getAccountAddressesController,
-	postAccountAddressController,
-	putAccountAddressController,
-	deleteAccountAddressController,
-	setPrimaryAddressController,
-	getFavoritesController,
-	getAccountAddressesOptionsController,
-	getCardsController,
-	postCardsController,
-	deleteCardsController,
-	getCardsOptionsController,
-	getProfileController,
-	putProfileController,
-	getOrdersController,
-	getOrderDetailController
+  getAccountAddressesController,
+  postAccountAddressController,
+  putAccountAddressController,
+  deleteAccountAddressController,
+  setPrimaryAddressController,
+  getFavoritesController,
+  getAccountAddressesOptionsController,
+  getCardsController,
+  postCardsController,
+  deleteCardsController,
+  getCardsOptionsController,
+  getProfileController,
+  putProfileController,
+  getOrdersController,
+  getOrderDetailController,
 } = require("../controllers/account");
 
 const {
-	getAllController,
-	getOptionsController,
-	createController,
-	deleteController,
-	updateController,
+  getAllController,
+  getOptionsController,
+  createController,
+  deleteController,
+  updateController,
 } = require("../controllers/cupon");
 
 const {
-	getAllController: getAllZonesController,
-	createController: createZonesController,
-	deleteController: deleteZonesController,
-	updateController: updateZonesController,
+  getAllController: getAllZonesController,
+  createController: createZonesController,
+  deleteController: deleteZonesController,
+  updateController: updateZonesController,
 } = require("../controllers/zona");
 
 const {
-	getAllController: getAllBanksController,
-	createController: createBanksController,
-	deleteController: deleteBanksController,
-	updateController: updateBanksController,
+  getAllController: getAllBanksController,
+  createController: createBanksController,
+  deleteController: deleteBanksController,
+  updateController: updateBanksController,
 } = require("../controllers/banco");
 
 const {
-	getAllController: getAllBrandsController,
-	createController: createBrandsController,
-	deleteController: deleteBrandsController,
-	updateController: updateBrandsController,
+  getAllController: getAllBrandsController,
+  createController: createBrandsController,
+  deleteController: deleteBrandsController,
+  updateController: updateBrandsController,
 } = require("../controllers/marca");
+
+const {
+  getAllController: getAllCategoriesController,
+  createController: createCategoriesController,
+  deleteController: deleteCategoriesController,
+  updateController: updateCategoriesController,
+} = require("../controllers/categoria");
 
 const {
   getAllController: getAllBankPromosController,
   createController: createBankPromosController,
   deleteController: deleteBankPromosController,
   updateController: updateBankPromosController,
-  getOptionsController: getBankPromosOptionsController
+  getOptionsController: getBankPromosOptionsController,
 } = require("../controllers/promocionbancaria");
 
 const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
 
 router.use(
-	["/addresses", "/favorites", "/cards", "/profile", "/orders"],
-	requireAnyRole(ROLES.USUARIO)
+  ["/addresses", "/favorites", "/cards", "/profile", "/orders"],
+  requireAnyRole(ROLES.USUARIO)
 );
 
 // DIRECCIONES
@@ -126,5 +133,12 @@ router.get("/brands", getAllBrandsController);
 router.post("/brands", createBrandsController);
 router.put("/brands/:id", updateBrandsController);
 router.delete("/brands/:id", deleteBrandsController);
+
+router.use("/categories", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/categories", getAllCategoriesController);
+router.post("/categories", createCategoriesController);
+router.put("/categories/:id", updateCategoriesController);
+router.delete("/categories/:id", deleteCategoriesController);
 
 module.exports = router;
