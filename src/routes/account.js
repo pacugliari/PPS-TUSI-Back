@@ -17,6 +17,7 @@ const {
   putProfileController,
   getOrdersController,
   getOrderDetailController,
+  postOrderRateController
 } = require("../controllers/account");
 
 const {
@@ -110,6 +111,7 @@ router.put("/profile", putProfileController);
 // ORDERS
 router.get("/orders", getOrdersController);
 router.get("/orders/:id", getOrderDetailController);
+router.post("/orders/:idProducto/rate", postOrderRateController);
 
 // ADMIN y OPERARIO
 router.use("/coupons", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));

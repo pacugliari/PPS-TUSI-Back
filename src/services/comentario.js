@@ -19,22 +19,33 @@ const getByIdService = async (req) => {
 };
 
 const createService = async (req) => {
-  const { idUsuario, idProducto, puntuacion, comentario: texto } = req.body;
+  const { puntuacion, comentario: texto } = req.body;
+  const idUsuario = req.user?.id;
+  const { idProducto } = req.params;
 
-  // Validaciones
   if (!idUsuario || !idProducto || !texto) {
     throw new HttpError(400, "Usuario, producto y comentario son requeridos");
   }
-
-  if (puntuacion && (puntuacion < 1 || puntuacion > 5)) {
+  if (puntuacion == null || puntuacion < 1 || puntuacion > 5) {
     throw new HttpError(400, "La puntuación debe ser entre 1 y 5");
   }
 
+  const yaExiste = await comentarioRepository.findOne({
+    idUsuario: Number(idUsuario),
+    idProducto: Number(idProducto),
+  });
+  if (yaExiste) {
+    throw new HttpError(
+      400,
+      "El usuario ya realizó una valoración de este producto"
+    );
+  }
+
   const nuevoComentario = await comentarioRepository.create({
-    idUsuario,
-    idProducto,
-    puntuacion,
-    comentario: texto
+    idUsuario: Number(idUsuario),
+    idProducto: Number(idProducto),
+    puntuacion: Number(puntuacion),
+    comentario: String(texto).trim(),
   });
 
   return nuevoComentario;
@@ -46,7 +57,8 @@ const updateService = async (req) => {
 
   // Verificar si existe
   const comentarioExistente = await comentarioRepository.findById(id);
-  if (!comentarioExistente) throw new HttpError(404, "Comentario no encontrado");
+  if (!comentarioExistente)
+    throw new HttpError(404, "Comentario no encontrado");
 
   // Validaciones
   if (!texto) {
@@ -59,7 +71,7 @@ const updateService = async (req) => {
 
   const comentario = await comentarioRepository.update(id, {
     puntuacion,
-    comentario: texto
+    comentario: texto,
   });
 
   return comentario;

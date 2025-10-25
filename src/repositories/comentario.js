@@ -10,6 +10,11 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
+async function findOne(where) {
+  const row = await Comentario.findOne({ where });
+  return row ? row.get({ plain: true }) : null;
+}
+
 async function create(data) {
   const row = await Comentario.create(data);
   const created = await findById(row.idComentario);
@@ -31,6 +36,7 @@ async function remove(id) {
 module.exports = {
   findAll,
   findById,
+  findOne,
   create,
   update,
   remove

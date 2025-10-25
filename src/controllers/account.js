@@ -5,6 +5,7 @@ const productoService = require("../services/producto");
 const tarjetaService = require("../services/tarjeta");
 const perfilService = require("../services/perfil");
 const pedidoService = require("../services/pedido");
+const comentarioService = require("../services/comentario");
 const ResponseBuilder = require("../utils/api-response");
 
 const getAccountAddressesController = async (req, res) => {
@@ -224,6 +225,24 @@ const getOrdersController = async (req, res) => {
     }
 };
 
+const postOrderRateController = async (req, res) => {
+  try {
+    const result = await comentarioService.createService(req);
+    res
+      .status(201)
+      .json(
+        ResponseBuilder.success(
+          result,
+          "Calificación registrada exitosamente",
+          201
+        )
+      );
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json(ResponseBuilder.error(err.message, status));
+  }
+};
+
 module.exports = {
     getAccountAddressesController,
     getFavoritesController,
@@ -240,4 +259,5 @@ module.exports = {
     putProfileController,
     getOrdersController,
     getOrderDetailController,
+    postOrderRateController
 };

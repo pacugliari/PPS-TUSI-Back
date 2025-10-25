@@ -1,4 +1,12 @@
-const { Pedido, Usuario, DetallePedido, Producto, Envio, Direccion } = require("../models");
+const {
+  Pedido,
+  Usuario,
+  DetallePedido,
+  Producto,
+  Envio,
+  Direccion,
+  Comentario
+} = require("../models");
 
 async function findAll() {
   const rows = await Pedido.findAll();
@@ -14,47 +22,63 @@ async function findByUserId(idUsuario) {
   const rows = await Pedido.findAll({
     where: { idUsuario },
     attributes: [
-      'idPedido',
-      ['createdAt', 'fecha'],
-      'estado',
-      'impuestos',
-      'subtotal',
-      'total',
-      'formaPago'
+      "idPedido",
+      ["createdAt", "fecha"],
+      "estado",
+      "impuestos",
+      "subtotal",
+      "total",
+      "formaPago",
     ],
-    order: [['createdAt', 'DESC']]
+    order: [["createdAt", "DESC"]],
   });
-  return rows.map(r => r.get({ plain: true }));
+  return rows.map((r) => r.get({ plain: true }));
 }
 
-// Pedido por id para un usuario, con items (DetallePedido + Producto)
 async function findByIdAndUserWithItems(idPedido, idUsuario) {
   const row = await Pedido.findOne({
     where: { idPedido, idUsuario },
     attributes: [
-      'idPedido',
-      ['createdAt', 'fecha'],
-      'estado',
-      'impuestos',
-      'subtotal',
-      'total',
-      'formaPago'
+      "idPedido",
+      ["createdAt", "fecha"],
+      "estado",
+      "impuestos",
+      "subtotal",
+      "total",
+      "formaPago",
     ],
     include: [
       {
         model: DetallePedido,
-        as: 'detalles',
-        attributes: ['idDetallePedido', 'cantidad', 'precio'],
+        as: "detalles",
+        attributes: ["idDetallePedido", "cantidad", "precio"],
         include: [
           {
             model: Producto,
-            as: 'producto',
-            attributes: ['idProducto', 'nombre','iva']
-          }
-        ]
-      }
-    ]
+            as: "producto",
+            attributes: ["idProducto", "nombre", "iva"],
+            include: [
+              {
+                model: Comentario,
+                as: "comentarios",
+                where: { idUsuario },
+                required: false,
+                attributes: [
+                  "idComentario",
+                  "puntuacion",
+                  "comentario",
+                  "createdAt",
+                ],
+                limit: 1,
+                order: [["createdAt", "DESC"]],
+              },
+            ],
+          },
+        ],
+      },
+    ],
   });
+
   return row ? row.get({ plain: true }) : null;
 }
 

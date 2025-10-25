@@ -65,12 +65,6 @@ app.use(
   propiedadRoutes
 );
 
-app.use(
-  "/api/comentarios",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  comentariosRoutes
-);
 app.use("/api/auth", authRoutes);
 app.use("/api/productos", productosRoutes);
 

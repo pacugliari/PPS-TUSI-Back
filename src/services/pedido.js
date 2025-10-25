@@ -44,11 +44,15 @@ const getOrderDetailByIdService = async (req) => {
     const precioConIVA = round2(precio * factorIVA);
     const subtotal = cantidad ? round2(precioConIVA * cantidad) : null;
 
+    const opinion = d.producto?.comentarios?.[0] || null;
+
     return {
+      idProducto: d.producto?.idProducto,
       articulo: d.producto?.nombre,
       precio: precioConIVA,
       cantidad,
       subtotal,
+      calificado: !!opinion,
     };
   });
 
@@ -57,6 +61,13 @@ const getOrderDetailByIdService = async (req) => {
     items,
     total: pedido.total,
   };
+};
+
+module.exports = {
+  getAllService,
+  getByIdService,
+  getOrdersByUserService,
+  getOrderDetailByIdService,
 };
 
 module.exports = {
