@@ -33,6 +33,7 @@ const ordenCompraRoutes = require("./src/routes/ordencompra");
 const itemOrdenCompraRoutes = require("./src/routes/itemordencompra");
 const pedidoRoutes = require("./src/routes/pedido");
 const accountRoutes = require("./src/routes/account");
+const cartRoutes = require("./src/routes/cart");
 
 // Middlewares
 const errorHandler = require("./src/middlewares/http-error");
@@ -100,7 +101,7 @@ app.use(
   pedidoRoutes
 );
 app.use("/api/account", auth, accountRoutes);
-
+app.use("/api/cart", auth, cartRoutes);
 // Handler de errores (al final)
 app.use(errorHandler);
 
