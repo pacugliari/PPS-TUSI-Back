@@ -137,6 +137,36 @@ const getOptionsService = async () => {
   }
 };
 
+const validateCodeService = async (req) => {
+  const { code } = req.params;
+  const idUsuario = req.user?.id;
+
+  if (!code) {
+    throw new HttpError(404, "Cupón no encontrado");
+  }
+
+  const codigo = String(code).toUpperCase();
+  const cupon = await cuponRepository.findOne({ codigo });
+  
+  if (!cupon) {
+    throw new HttpError(404, "Cupón no encontrado");
+  }
+
+  const now = new Date();
+  const desde = new Date(cupon.fechaDesde);
+  const hasta = new Date(cupon.fechaHasta);
+
+  const enVigencia = now >= desde && now <= hasta;
+  const perteneceAlUsuario =
+    cupon.idUsuario ? String(cupon.idUsuario) === String(idUsuario) : true;
+
+  if (!enVigencia || !perteneceAlUsuario) {
+    throw new HttpError(400, "El cupón no es válido o ha expirado");
+  }
+
+  return { code: cupon.codigo, percent: cupon.porcentaje };
+};
+
 module.exports = {
   getAllService,
   getByIdService,
@@ -144,4 +174,5 @@ module.exports = {
   updateService,
   deleteService,
   getOptionsService,
+  validateCodeService,
 };
