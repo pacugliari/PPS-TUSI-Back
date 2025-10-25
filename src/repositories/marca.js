@@ -1,7 +1,10 @@
 const { Marca } = require("../models");
 
 async function findAll() {
-  const rows = await Marca.findAll();
+  const rows = await Marca.findAll({
+    where: { activo: true },
+    attributes: { exclude: ["activo"] },
+  });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
 
@@ -11,7 +14,12 @@ async function findById(id) {
 }
 
 async function findOne(where) {
-  const row = await Marca.findOne({ where });
+  const row = await Marca.findOne({
+    where: {
+      ...where,
+      activo: true,
+    },
+  });
   return row ? row.get({ plain: true }) : null;
 }
 
@@ -23,7 +31,7 @@ async function create(data) {
 
 async function update(id, data) {
   const [updated] = await Marca.update(data, {
-    where: { idMarca: id }
+    where: { idMarca: id },
   });
   if (!updated) return null;
   return await findById(id);
@@ -39,5 +47,5 @@ module.exports = {
   findOne,
   create,
   update,
-  remove
+  remove,
 };

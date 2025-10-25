@@ -75,23 +75,23 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     );
 
     const categorias = ['Notebooks', 'PCs', 'Monitores', 'Periféricos', 'Audio', 'Conectividad', 'Almacenamiento', 'Impresión', 'Gaming', 'Accesorios']
-      .map((nombre, i) => ({ idCategoria: i + 1, nombre, descripcion: `Categoria ${nombre}` }));
+      .map((nombre, i) => ({ idCategoria: i + 1, nombre, descripcion: `Categoria ${nombre}`,activo: true }));
     await Categoria.bulkCreate(categorias, { ignoreDuplicates: true });
 
     await SubCategoria.bulkCreate(
-      Array.from({ length: 10 }, (_, i) => ({ idSubCategoria: i + 1, idCategoria: (i % 10) + 1, nombre: `Subcat ${i + 1}`, descripcion: `Subcategoria ${i + 1}` })),
+      Array.from({ length: 10 }, (_, i) => ({ idSubCategoria: i + 1, idCategoria: (i % 10) + 1, nombre: `Subcat ${i + 1}`, descripcion: `Subcategoria ${i + 1}`, activo: true})),
       { ignoreDuplicates: true }
     );
 
     await Marca.bulkCreate(
       ['Acer', 'Asus', 'Lenovo', 'HP', 'Dell', 'Logitech', 'MSI', 'Gigabyte', 'Kingston', 'Samsung']
-        .map((nombre, i) => ({ idMarca: i + 1, nombre, descripcion: `Marca ${nombre}` })),
+        .map((nombre, i) => ({ idMarca: i + 1, nombre, descripcion: `Marca ${nombre}`,activo:true })),
       { ignoreDuplicates: true }
     );
 
     await Caracteristica.bulkCreate(
       ['Color', 'Peso', 'Dimensiones', 'Capacidad', 'Velocidad', 'Material', 'Garantía', 'Potencia', 'Compatibilidad', 'Modelo']
-        .map((descripcion, i) => ({ idCaracteristica: i + 1, descripcion })),
+        .map((descripcion, i) => ({ idCaracteristica: i + 1, descripcion ,activo: true})),
       { ignoreDuplicates: true }
     );
 
@@ -154,8 +154,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     ], { ignoreDuplicates: true });
 
     await PromocionBancaria.bulkCreate([
-      { idPromocionBancaria: 1, idBanco: 5, nombre: '12 cuotas sin interés', fechaDesde: hoy, fechaHasta: en30, dias: ['viernes', 'sabado', 'domingo'] },
-      { idPromocionBancaria: 2, idBanco: 6, nombre: '15% off con Mastercard', fechaDesde: hoy, fechaHasta: en30, dias: ['lunes', 'martes', 'miercoles', 'jueves'] },
+      { idPromocionBancaria: 1, idBanco: 5, nombre: '12 cuotas sin interés',porcentaje: 12.00, fechaDesde: hoy, fechaHasta: en30, dias: ['viernes', 'sabado', 'domingo'] ,activo: true},
+      { idPromocionBancaria: 2, idBanco: 6, nombre: '15% off con Mastercard',porcentaje: 15.00, fechaDesde: hoy, fechaHasta: en30, dias: ['lunes', 'martes', 'miercoles', 'jueves'],activo: true },
     ], { ignoreDuplicates: true });
 
     /* =========================
@@ -173,6 +173,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         precioAnterior: idx % 2 === 0 ? 120000 + idx * 2500 : null,
         descripcion: `Descripción del producto ${idx}`,
         stock: 50 + idx,
+        iva: 21.00,
         fotos: [`https://dummyimage.com/800x1200/cccccc/000000&text=Producto+${idx}`],
       };
     });

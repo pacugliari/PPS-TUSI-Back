@@ -44,10 +44,20 @@ const deleteController = async (req, res) => {
   );
 };
 
+const getOptionsController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await promocionBancariaService.getOptionsService(req),
+      "Opciones de promociones bancarias consultadas exitosamente"
+    )
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
   createController,
   updateController,
-  deleteController
+  deleteController,
+  getOptionsController
 };

@@ -2,6 +2,7 @@ const { PromocionBancaria, Banco } = require("../models");
 
 async function findAll() {
   const rows = await PromocionBancaria.findAll({
+    where: { activo: true },
     include: [
       { model: Banco, as: "banco", attributes: ['idBanco', 'nombre'] }
     ]

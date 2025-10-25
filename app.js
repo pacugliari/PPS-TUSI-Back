@@ -53,54 +53,12 @@ app.use(corsMiddleware);
 
 // Rutas
 app.use(
-  "/api/subcategorias",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  subcategoriaRoutes
-);
-app.use(
-  "/api/marcas",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  marcaRoutes
-);
-app.use(
   "/api/stocks",
   auth,
   requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
   stockRoutes
 );
-app.use(
-  "/api/usuarios",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  usuarioRoutes
-);
-app.use(
-  "/api/perfiles",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  perfilRoutes
-);
-app.use(
-  "/api/direcciones",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  direccionRoutes
-);
-app.use(
-  "/api/tarjetas",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  tarjetaRoutes
-);
 
-app.use(
-  "/api/promocionesbancarias",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  promocionBancariaRoutes
-);
 app.use(
   "/api/propiedades",
   auth,
@@ -108,33 +66,9 @@ app.use(
   propiedadRoutes
 );
 
-app.use(
-  "/api/comentarios",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  comentariosRoutes
-);
-app.use(
-  "/api/categorias",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  categoriasRoutes
-);
-app.use(
-  "/api/caracteristicas",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  caracteristicasRoutes
-);
 app.use("/api/auth", authRoutes);
 app.use("/api/productos", productosRoutes);
 
-app.use(
-  "/api/detallepedidos",
-  auth,
-  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO),
-  detallepedidoRoutes
-);
 app.use("/api/home", homeRoutes);
 app.use(
   "/api/devoluciones",

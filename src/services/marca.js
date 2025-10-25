@@ -1,7 +1,7 @@
 const HttpError = require("../utils/http-error");
 const marcaRepository = require("../repositories/marca");
 
-const getAllService = async (req) => {
+const getAllService = async () => {
   try {
     const { rows } = await marcaRepository.findAll();
     return rows;
@@ -13,7 +13,10 @@ const getAllService = async (req) => {
 const getByIdService = async (req) => {
   const { id } = req.params;
   const marca = await marcaRepository.findById(id);
-  if (!marca) throw new HttpError(404, "Marca no encontrada");
+
+  if (!marca || marca.activo === false) {
+    throw new HttpError(404, "Marca no encontrada");
+  }
   return { data: marca };
 };
 
@@ -21,51 +24,68 @@ const createService = async (req) => {
   const { nombre, descripcion } = req.body;
 
   if (!nombre) {
-    throw new HttpError(400, "El nombre es requerido");
+    throw new HttpError(400, "El nombre es requerido").setErrors([
+      { nombre: "El nombre de la marca es requerido" },
+    ]);
   }
 
-  // Verificar si ya existe una marca con el mismo nombre
   const marcaExistente = await marcaRepository.findOne({ nombre });
   if (marcaExistente) {
-    throw new HttpError(400, "Ya existe una marca con ese nombre");
+    throw new HttpError(400, "Ya existe una marca con ese nombre").setErrors([
+      { nombre: "El nombre de la marca ya está registrado" },
+    ]);
   }
 
-  const marca = await marcaRepository.create({ nombre, descripcion });
-  return marca;
+  const marca = await marcaRepository.create({
+    nombre,
+    descripcion,
+    activo: true,
+  });
+  return { data: marca };
 };
 
 const updateService = async (req) => {
   const { id } = req.params;
-  const { nombre, descripcion } = req.body;
+  const { nombre, descripcion, activo } = req.body;
 
-  if (!nombre) {
-    throw new HttpError(400, "El nombre es requerido para actualizar");
-  }
-
-  // Verificar si existe la marca
   const marca = await marcaRepository.findById(id);
-  if (!marca) {
+  if (!marca || marca.activo === false) {
     throw new HttpError(404, "Marca no encontrada");
   }
 
-  // Verificar si ya existe otra marca con el mismo nombre
-  if (nombre !== marca.nombre) {
+  if (!nombre && descripcion === undefined && activo === undefined) {
+    throw new HttpError(400, "No hay campos para actualizar").setErrors([
+      { body: "Debe proporcionar al menos un campo para actualizar" },
+    ]);
+  }
+
+  if (nombre && nombre !== marca.nombre) {
     const marcaExistente = await marcaRepository.findOne({ nombre });
     if (marcaExistente) {
-      throw new HttpError(400, "Ya existe una marca con ese nombre");
+      throw new HttpError(400, "Ya existe una marca con ese nombre").setErrors([
+        { nombre: "El nombre de la marca ya está registrado" },
+      ]);
     }
   }
 
-  const marcaActualizada = await marcaRepository.update(id, { nombre, descripcion });
-  return marcaActualizada;
+  const marcaActualizada = await marcaRepository.update(id, {
+    ...(nombre && { nombre }),
+    ...(descripcion !== undefined && { descripcion }),
+    ...(activo !== undefined && { activo }),
+  });
+
+  return { data: marcaActualizada };
 };
 
 const deleteService = async (req) => {
   const { id } = req.params;
   const marca = await marcaRepository.findById(id);
-  if (!marca) throw new HttpError(404, "Marca no encontrada");
-  await marcaRepository.remove(id);
-  return true;
+  if (!marca || marca.activo === false) {
+    throw new HttpError(404, "Marca no encontrada");
+  }
+
+  const marcaActualizada = await marcaRepository.update(id, { activo: false });
+  return { data: marcaActualizada };
 };
 
 module.exports = {
