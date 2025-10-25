@@ -5,10 +5,8 @@ const {
 	validateCouponController,
 } = require("../controllers/cart");
 
-// POST /cart/products
-router.post("/products", getCartProductsController);
 
-// GET /cart/coupons/:code/validate
-router.get("/coupons/:code/validate", validateCouponController);
+router.post("/products", getCartProductsController);
+router.post("/coupons/validate", validateCouponController);
 
 module.exports = router;

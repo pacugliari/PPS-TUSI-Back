@@ -2,7 +2,6 @@ const ResponseBuilder = require("../utils/api-response");
 const productoService = require("../services/producto");
 const cuponService = require("../services/cupon");
 
-// POST /cart/products
 const getCartProductsController = async (req, res) => {
   try {
     const { ids } = req.body || {};
@@ -28,7 +27,7 @@ const getCartProductsController = async (req, res) => {
       );
   }
 };
-// GET /cart/coupons/:code/validate
+
 const validateCouponController = async (req, res) => {
   try {
     const result = await cuponService.validateCodeService(req);
@@ -43,7 +42,7 @@ const validateCouponController = async (req, res) => {
         : status === 400
           ? "El cupón no es válido o ha expirado"
           : err.message || "Error de servidor";
-    return res.status(status).json(ResponseBuilder.error(message, [], status));
+    return res.status(status).json(ResponseBuilder.error(message, [{message}], status));
   }
 };
 

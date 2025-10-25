@@ -138,7 +138,7 @@ const getOptionsService = async () => {
 };
 
 const validateCodeService = async (req) => {
-  const { code } = req.params;
+  const { code } = req.body;
   const idUsuario = req.user?.id;
 
   if (!code) {
@@ -147,7 +147,7 @@ const validateCodeService = async (req) => {
 
   const codigo = String(code).toUpperCase();
   const cupon = await cuponRepository.findOne({ codigo });
-  
+
   if (!cupon) {
     throw new HttpError(404, "Cupón no encontrado");
   }
@@ -157,8 +157,9 @@ const validateCodeService = async (req) => {
   const hasta = new Date(cupon.fechaHasta);
 
   const enVigencia = now >= desde && now <= hasta;
-  const perteneceAlUsuario =
-    cupon.idUsuario ? String(cupon.idUsuario) === String(idUsuario) : true;
+  const perteneceAlUsuario = cupon.idUsuario
+    ? String(cupon.idUsuario) === String(idUsuario)
+    : true;
 
   if (!enVigencia || !perteneceAlUsuario) {
     throw new HttpError(400, "El cupón no es válido o ha expirado");
