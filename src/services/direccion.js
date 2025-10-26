@@ -1,5 +1,6 @@
 const HttpError = require("../utils/http-error");
 const direccionRepository = require("../repositories/direccion");
+const zonaRepository = require("../repositories/zona");
 
 const getAllService = async (req) => {
   try {
@@ -104,28 +105,59 @@ const getByUserService = async (req) => {
 const setPrimaryService = async (req) => {
   const { id } = req.params;
   const idUsuario = req.user.id;
-  
+
   const direccion = await direccionRepository.findById(id);
   if (!direccion || !direccion.activo) throw new HttpError(404, "Dirección no encontrada");
   if (direccion.idUsuario !== idUsuario) {
     throw new HttpError(403, "No tienes permiso para modificar esta dirección");
   }
-  
+
   const direccionesUsuario = await direccionRepository.findByIdUser(idUsuario);
   for (const dir of direccionesUsuario) {
     if (dir.principal && dir.activo) {
       await direccionRepository.update(dir.idDireccion, { principal: false });
     }
   }
-  
+
   const actualizada = await direccionRepository.update(id, { principal: true });
   return { data: actualizada };
+};
+
+// Servicio auxiliar para Checkout: direcciones activas del usuario
+const getCheckoutAddressesService = async (req) => {
+  const idUsuario = req.user?.id;
+  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
+  const direcciones = await direccionRepository.findByIdUser(idUsuario);
+  const activas = direcciones.filter((d) => d.activo);
+  // Enriquecer zona con todos los campos requeridos para el payload
+  const enriched = await Promise.all(
+    activas.map(async (d) => {
+      const zonaId = d.idZona || d.zona?.idZona;
+      let zona = d.zona || null;
+      if (zonaId) {
+        const fullZona = await zonaRepository.findById(zonaId);
+        if (fullZona) {
+          zona = {
+            idZona: fullZona.idZona,
+            nombre: fullZona.nombre,
+            ciudad: fullZona.ciudad,
+            provincia: fullZona.provincia,
+            costoEnvio: fullZona.costoEnvio,
+          };
+        }
+      }
+      const { activo, ...rest } = d;
+      return { ...rest, zona };
+    })
+  );
+  return enriched;
 };
 
 module.exports = {
   getAllService,
   getByIdService,
   getByUserService,
+  getCheckoutAddressesService,
   createService,
   updateService,
   deleteService,
