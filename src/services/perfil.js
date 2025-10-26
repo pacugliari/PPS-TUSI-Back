@@ -124,6 +124,16 @@ const putProfileService = async (req) => {
   };
 };
 
+// Servicio auxiliar para Checkout: devuelve el perfil completo (incluye usuario)
+const getFullProfileByUserService = async (req) => {
+  const idUsuario = req.user?.id;
+  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
+
+  const perfil = await perfilRepository.findByUserId(idUsuario);
+  if (!perfil) throw new HttpError(404, "Perfil no encontrado");
+  return perfil;
+};
+
 module.exports = {
   getAllService,
   getByIdService,
@@ -132,4 +142,5 @@ module.exports = {
   deleteService,
   getProfileService,
   putProfileService,
+  getFullProfileByUserService
 };
