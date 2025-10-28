@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { createMulterMemory } = require("../utils/multer.factory");
+const uploadFotos = createMulterMemory({ fileSizeMB: 5, fileCount: 3 });
 
 const {
   getAccountAddressesController,
@@ -17,7 +19,12 @@ const {
   putProfileController,
   getOrdersController,
   getOrderDetailController,
-  postOrderRateController
+  postOrderRateController,
+  getProductsController,
+  getProductsOptionsController,
+  postProductController,
+  putProductController,
+  deleteProductController,
 } = require("../controllers/account");
 
 const {
@@ -172,5 +179,14 @@ router.get("/subcategories/options", getSubcategoriesOptionsController);
 router.post("/subcategories", createSubcategoriesController);
 router.put("/subcategories/:id", updateSubcategoriesController);
 router.delete("/subcategories/:id", deleteSubcategoriesController);
+
+router.use("/products", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+
+router.get("/products", getProductsController);
+router.get("/products/options", getProductsOptionsController);
+router.post("/products",uploadFotos.array("fotos", 3), postProductController);
+router.put("/products/:id",uploadFotos.array("fotos", 3), putProductController);
+router.delete("/products/:id", deleteProductController);
 
 module.exports = router;

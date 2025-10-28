@@ -173,6 +173,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         precioAnterior: idx % 2 === 0 ? 120000 + idx * 2500 : null,
         descripcion: `Descripción del producto ${idx}`,
         stock: 50 + idx,
+        activo: true,
         iva: 21.00,
         fotos: [`https://dummyimage.com/800x1200/cccccc/000000&text=Producto+${idx}`],
       };

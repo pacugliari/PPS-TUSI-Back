@@ -1,4 +1,3 @@
-// src/repository/product.repository.js
 const { Op, fn, col, literal } = require("sequelize");
 const {
   Producto,
@@ -9,15 +8,13 @@ const {
   Comentario,
   Propiedad,
   Caracteristica,
-  Usuario
+  Usuario,
 } = require("../models");
 
-// ---- helpers internos solo del repo ----
 const buildWhere = (filters = {}) => {
   const { q, categoryId, subcategoryId, brandId, minPrice, maxPrice } = filters;
   const where = {};
   if (q) {
-    // iLike en Postgres; en MySQL podrías usar [Op.substring]
     where[Op.or] = [
       { nombre: { [Op.iLike]: `%${q}%` } },
       { descripcion: { [Op.iLike]: `%${q}%` } },
@@ -53,7 +50,19 @@ const baseInclude = [
     attributes: ["idSubCategoria", "nombre"],
   },
   { model: Marca, as: "marca", attributes: ["idMarca", "nombre"] },
-  { model: Stock, as: "stockDetallado", attributes: ["stockActual", "estado"] },
+  {
+    model: Stock,
+    as: "stockDetallado",
+    attributes: [
+      "stockMinimo",
+      "stockMaximo",
+      "stockActual",
+      "reservado",
+      "comprometido",
+      "disponibilidad",
+      "estado",
+    ],
+  },
   {
     model: Propiedad,
     as: "propiedades",
@@ -73,11 +82,10 @@ const baseInclude = [
     include: [
       { model: Usuario, as: "usuario", attributes: ["idUsuario", "email"] },
     ],
-    required: false, // no forzar join si no hay comentarios
+    required: false,
   },
 ];
 
-// ---- API del repositorio ----
 async function findAll({
   page = 1,
   limit = 10,
@@ -92,15 +100,14 @@ async function findAll({
   const order = buildOrder(sort);
 
   const { rows, count } = await Producto.findAndCountAll({
-    where,
-    include: [
-      ...baseInclude,
-      // Para evitar payload enorme no seleccionamos comentarios; si quisieras promedio:
-      // { model: Comentario, as: "comentarios", attributes: [] }
-    ],
+    where: { ...where, activo: true },
+    include: [...baseInclude],
+
+    attributes: { exclude: ["activo"] },
+
     order,
     offset,
-    limit: limitNum,
+    //limit: limitNum,
     distinct: true,
   });
 
@@ -144,7 +151,7 @@ async function update(id, data) {
 }
 
 async function remove(id) {
-  return await Producto.destroy({ where: { idProducto: id } }); // devuelve count
+  return await Producto.destroy({ where: { idProducto: id } });
 }
 
 module.exports = {

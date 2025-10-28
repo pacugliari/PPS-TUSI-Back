@@ -18,7 +18,7 @@ module.exports = (sequelize) => {
       descripcion: { type: DataTypes.TEXT },
       stock: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
       fotos: { type: DataTypes.JSON, defaultValue: [] },
-
+      activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
       iva: {
         type: DataTypes.DECIMAL(5, 2),
         allowNull: false,

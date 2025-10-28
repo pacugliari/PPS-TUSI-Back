@@ -2,13 +2,15 @@ class ResponseBuilder {
   static success(
     payload = null,
     message = "Operación exitosa",
-    statusCode = 200
+    statusCode = 200,
+    errors = undefined
   ) {
     return {
       statusCode,
       success: true,
       message,
       payload,
+      errors: errors ?? undefined,
     };
   }
 

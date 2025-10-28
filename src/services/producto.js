@@ -4,9 +4,8 @@ const { DetallePedido, Producto, Categoria } = require("../models");
 
 const getAllService = async (req) => {
   try {
-    const { rows } = await productoRepository.findAll();
-
-    return rows;
+    const { rows } = await productoRepository.findAll(); // si tu repo ya filtra, igual reforzamos acá
+    return (rows || []).filter((p) => p?.activo === true);
   } catch (err) {
     throw new HttpError(500, "No se pudieron obtener los productos");
   }
@@ -15,31 +14,55 @@ const getAllService = async (req) => {
 const getByIdService = async (req) => {
   const { id } = req.params;
   const product = await productoRepository.findById(id);
-  if (!product) throw new HttpError(404, "Producto no encontrado");
+  if (!product || product.activo !== true)
+    throw new HttpError(404, "Producto no encontrado");
   return { data: product };
 };
 
 const getPopularProductsService = async () => {
-  // Consulta los productos más vendidos usando DetallePedido
+  // Más vendidos entre productos activos
   const results = await DetallePedido.findAll({
     attributes: [
-      'idProducto',
-      [Producto.sequelize.fn('SUM', Producto.sequelize.col('cantidad')), 'totalVendidos']
+      "idProducto",
+      [
+        Producto.sequelize.fn("SUM", Producto.sequelize.col("cantidad")),
+        "totalVendidos",
+      ],
     ],
     include: [
       {
         model: Producto,
-        as: 'producto',
-        attributes: ['idProducto', 'nombre', 'fotos', 'precio', 'precioAnterior', 'idCategoria'],
-        include: [{ model: Categoria, as: 'categoria', attributes: ['idCategoria', 'nombre'] }]
-      }
+        as: "producto",
+        attributes: [
+          "idProducto",
+          "nombre",
+          "fotos",
+          "precio",
+          "precioAnterior",
+          "idCategoria",
+          "activo",
+        ],
+        where: { activo: true }, // <-- solo activos
+        include: [
+          {
+            model: Categoria,
+            as: "categoria",
+            attributes: ["idCategoria", "nombre"],
+          },
+        ],
+        required: true,
+      },
     ],
-    group: ['idProducto', 'producto.idProducto', 'producto->categoria.idCategoria'],
-    order: [[Producto.sequelize.literal('totalVendidos'), 'DESC']],
-    limit: 4
+    group: [
+      "idProducto",
+      "producto.idProducto",
+      "producto->categoria.idCategoria",
+    ],
+    order: [[Producto.sequelize.literal("totalVendidos"), "DESC"]],
+    limit: 4,
   });
 
-  return results.map(r => {
+  return results.map((r) => {
     const prod = r.producto;
     return {
       idProducto: prod.idProducto,
@@ -47,41 +70,55 @@ const getPopularProductsService = async () => {
       nombre: prod.nombre,
       categoria: prod.categoria,
       precio: prod.precio,
-      precioAnterior: prod.precioAnterior
+      precioAnterior: prod.precioAnterior,
     };
   });
 };
 
 const getLatestProductsService = async () => {
-  // Consulta los productos más recientes (últimos agregados)
+  // Últimos agregados activos
   const results = await Producto.findAll({
-    attributes: ['idProducto', 'nombre', 'fotos', 'precio', 'precioAnterior', 'idCategoria'],
-    include: [{ model: Categoria, as: 'categoria', attributes: ['idCategoria', 'nombre'] }],
-    order: [['createdAt', 'DESC']],
-    limit: 4
+    where: { activo: true }, // <-- solo activos
+    attributes: [
+      "idProducto",
+      "nombre",
+      "fotos",
+      "precio",
+      "precioAnterior",
+      "idCategoria",
+    ],
+    include: [
+      {
+        model: Categoria,
+        as: "categoria",
+        attributes: ["idCategoria", "nombre"],
+      },
+    ],
+    order: [["createdAt", "DESC"]],
+    limit: 4,
   });
 
-  return results.map(prod => ({
+  return results.map((prod) => ({
     idProducto: prod.idProducto,
     fotos: prod.fotos,
     nombre: prod.nombre,
     categoria: prod.categoria,
     precio: prod.precio,
-    precioAnterior: prod.precioAnterior
+    precioAnterior: prod.precioAnterior,
   }));
 };
 
 const getByIdsService = async (ids) => {
   if (!Array.isArray(ids) || ids.length === 0) return [];
   const productos = await Producto.findAll({
-    where: { idProducto: ids },
-    attributes: ['idProducto', 'nombre', 'precio', 'fotos']
+    where: { idProducto: ids, activo: true }, // <-- solo activos
+    attributes: ["idProducto", "nombre", "precio", "fotos"],
   });
-  return productos.map(prod => ({
+  return productos.map((prod) => ({
     idProducto: prod.idProducto,
     nombre: prod.nombre,
     precio: prod.precio,
-    fotos: prod.fotos
+    fotos: prod.fotos,
   }));
 };
 
@@ -94,26 +131,23 @@ const createService = async (req) => {
     precio,
     descripcion,
     stock,
-    fotos
+    fotos,
   } = req.body;
 
-  // Validaciones
-  const requiredFields = ['nombre', 'precio', 'idCategoria', 'idMarca'];
+  const requiredFields = ["nombre", "precio", "idCategoria", "idMarca"];
   const errors = [];
 
-  requiredFields.forEach(field => {
-    if (!req.body[field]) {
+  requiredFields.forEach((field) => {
+    if (!req.body[field])
       errors.push({ [field]: `El campo ${field} es requerido` });
-    }
   });
 
-  if (errors.length > 0) {
+  if (errors.length > 0)
     throw new HttpError(400, "Faltan campos requeridos").setErrors(errors);
-  }
 
   if (precio <= 0) {
     throw new HttpError(400, "El precio debe ser mayor a cero").setErrors([
-      { precio: "El precio debe ser mayor a cero" }
+      { precio: "El precio debe ser mayor a cero" },
     ]);
   }
 
@@ -126,6 +160,7 @@ const createService = async (req) => {
     descripcion,
     stock,
     fotos: Array.isArray(fotos) ? fotos : [],
+    activo: true, // crear activos por defecto
   });
 
   return product;
@@ -141,33 +176,30 @@ const updateService = async (req) => {
     precio,
     descripcion,
     stock,
-    fotos
+    fotos,
   } = req.body;
 
-  // Verificar si existe
   const productoExistente = await productoRepository.findById(id);
-  if (!productoExistente) {
+  if (!productoExistente || productoExistente.activo !== true) {
     throw new HttpError(404, "Producto no encontrado");
   }
 
-  // Validaciones para campos que se vayan a actualizar
   const errors = [];
-
   if (precio !== undefined && precio <= 0) {
     errors.push({ precio: "El precio debe ser mayor a cero" });
   }
-
-  if (errors.length > 0) {
+  if (errors.length > 0)
     throw new HttpError(400, "Datos inválidos").setErrors(errors);
-  }
 
   const updateData = {};
   if (idCategoria !== undefined) updateData.idCategoria = idCategoria;
   if (idSubCategoria !== undefined) updateData.idSubCategoria = idSubCategoria;
   if (idMarca !== undefined) updateData.idMarca = idMarca;
   if (nombre !== undefined) updateData.nombre = nombre;
-  updateData.precio = precio;
-  updateData.precioAnterior = productoExistente.precio;
+  if (precio !== undefined) {
+    updateData.precio = precio;
+    updateData.precioAnterior = productoExistente.precio;
+  }
   if (descripcion !== undefined) updateData.descripcion = descripcion;
   if (stock !== undefined) updateData.stock = stock;
   if (fotos !== undefined) updateData.fotos = Array.isArray(fotos) ? fotos : [];
