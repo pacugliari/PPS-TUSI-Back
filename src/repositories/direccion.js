@@ -14,7 +14,7 @@ async function findById(id) {
   const row = await Direccion.findByPk(id, {
     include: [
       { model: Usuario, as: "usuario", attributes: ['idUsuario', 'email'] },
-      { model: Zona, as: "zona", attributes: ['idZona', 'nombre'] }
+      { model: Zona, as: "zona", attributes: ['idZona', 'nombre','costoEnvio'] }
     ]
   });
   return row ? row.get({ plain: true }) : null;

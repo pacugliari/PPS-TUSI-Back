@@ -4,8 +4,8 @@ const { DetallePedido, Producto, Categoria } = require("../models");
 
 const getAllService = async (req) => {
   try {
-    const { rows } = await productoRepository.findAll(); // si tu repo ya filtra, igual reforzamos acá
-    return (rows || []).filter((p) => p?.activo === true);
+    const { rows } = await productoRepository.findAll();
+    return rows || [];
   } catch (err) {
     throw new HttpError(500, "No se pudieron obtener los productos");
   }
@@ -111,14 +111,15 @@ const getLatestProductsService = async () => {
 const getByIdsService = async (ids) => {
   if (!Array.isArray(ids) || ids.length === 0) return [];
   const productos = await Producto.findAll({
-    where: { idProducto: ids, activo: true }, // <-- solo activos
-    attributes: ["idProducto", "nombre", "precio", "fotos"],
+    where: { idProducto: ids, activo: true },
+    attributes: ["idProducto", "nombre", "precio", "fotos", "iva"],
   });
   return productos.map((prod) => ({
     idProducto: prod.idProducto,
     nombre: prod.nombre,
     precio: prod.precio,
     fotos: prod.fotos,
+    iva: prod.iva
   }));
 };
 

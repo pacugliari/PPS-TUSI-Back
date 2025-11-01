@@ -165,7 +165,11 @@ const validateCodeService = async (req) => {
     throw new HttpError(400, "El cupón no es válido o ha expirado");
   }
 
-  return { code: cupon.codigo, percent: cupon.porcentaje };
+  return {
+    idCupon: cupon.idCupon,
+    code: cupon.codigo,
+    percent: cupon.porcentaje,
+  };
 };
 
 module.exports = {

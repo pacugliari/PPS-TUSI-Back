@@ -1,12 +1,4 @@
-const {
-  Pedido,
-  Usuario,
-  DetallePedido,
-  Producto,
-  Envio,
-  Direccion,
-  Comentario
-} = require("../models");
+const { Pedido, DetallePedido, Producto, Comentario } = require("../models");
 
 async function findAll() {
   const rows = await Pedido.findAll();
@@ -46,6 +38,11 @@ async function findByIdAndUserWithItems(idPedido, idUsuario) {
       "subtotal",
       "total",
       "formaPago",
+      "descuentoCupon",
+      "descuentoBanco",
+      "porcentajeCupon",
+      "porcentajeBanco",
+      "costoEnvio",
     ],
     include: [
       {
