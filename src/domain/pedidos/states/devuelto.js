@@ -1,8 +1,8 @@
 const { PedidoState } = require("../state");
-
+const { ESTADOS_PEDIDOS } = require("../../../constants/pedidos");
 class Devuelto extends PedidoState {
   name() {
-    return "devuelto";
+    return ESTADOS_PEDIDOS.DEVUELTO;
   }
   allowed() {
     return [];

@@ -1,4 +1,5 @@
 const { DataTypes } = require("sequelize");
+const { ESTADOS_PEDIDOS, FORMAS_PAGO } = require("../constants/pedidos");
 
 module.exports = (sequelize) => {
   const Pedido = sequelize.define(
@@ -18,17 +19,11 @@ module.exports = (sequelize) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+
       estado: {
-        type: DataTypes.ENUM(
-          "pendiente",
-          "entregado",
-          "reservado",
-          "pagado",
-          "enviado",
-          "cancelado",
-          "devuelto"
-        ),
-        defaultValue: "pendiente",
+        type: DataTypes.ENUM(...Object.values(ESTADOS_PEDIDOS)),
+        allowNull: false,
+        defaultValue: ESTADOS_PEDIDOS.PENDIENTE,
       },
 
       /** Totales y desglose financiero */
@@ -41,11 +36,12 @@ module.exports = (sequelize) => {
 
       /** Datos de contexto */
       formaPago: {
-        type: DataTypes.ENUM("efectivo", "electronico"),
+        type: DataTypes.ENUM(...Object.values(FORMAS_PAGO)),
         allowNull: false,
       },
       porcentajeCupon: { type: DataTypes.DECIMAL(5, 2), defaultValue: 0 },
       porcentajeBanco: { type: DataTypes.DECIMAL(5, 2), defaultValue: 0 },
+      activo: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     },
     {
       tableName: "Pedidos",

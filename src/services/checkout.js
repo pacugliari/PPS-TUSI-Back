@@ -6,6 +6,11 @@ const tarjetaRepository = require("../repositories/tarjeta");
 const cuponRepository = require("../repositories/cupon");
 const direccionRepository = require("../repositories/direccion");
 const {
+  ESTADOS_PEDIDOS,
+  FORMAS_PAGO,
+  FORMAS_PAGO_VALIDOS,
+} = require("../constants/pedidos");
+const {
   sequelize,
   Pedido,
   DetallePedido,
@@ -246,7 +251,7 @@ const createOrderService = async (req) => {
     throw new HttpError(400, "Faltan campos requeridos").setErrors(missing);
 
   const fp = String(formaPago).toLowerCase();
-  if (!["efectivo", "electronico"].includes(fp)) {
+  if (!FORMAS_PAGO_VALIDOS.includes(fp)) {
     throw new HttpError(400, "Forma de pago inválida").setErrors([
       { formaPago: "Valor inválido" },
     ]);
@@ -288,7 +293,10 @@ const createOrderService = async (req) => {
       {
         idUsuario,
         fecha: new Date(),
-        estado: fp === "efectivo" ? "reservado" : "pagado",
+        estado:
+          fp === FORMAS_PAGO.EFECTIVO
+            ? ESTADOS_PEDIDOS.RESERVADO
+            : ESTADOS_PEDIDOS.PAGADO,
         subtotal: 0,
         impuestos: 0,
         descuentoCupon: 0,
@@ -384,9 +392,10 @@ const createOrderService = async (req) => {
       const qty = Number(line.cantidad || 0);
       const stockActual = Number(stk.stockActual || 0) - qty;
       const reservado =
-        Number(stk.reservado || 0) + (fp === "efectivo" ? qty : 0);
+        Number(stk.reservado || 0) + (fp === FORMAS_PAGO.EFECTIVO ? qty : 0);
       const comprometido =
-        Number(stk.comprometido || 0) + (fp === "electronico" ? qty : 0);
+        Number(stk.comprometido || 0) +
+        (fp === FORMAS_PAGO.ELECTRONICO ? qty : 0);
       const disponibilidad = stockActual - reservado - comprometido;
 
       await stk.update(

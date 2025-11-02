@@ -1,11 +1,11 @@
 const { PedidoState } = require("../state");
-
+const { ESTADOS_PEDIDOS } = require("../../../constants/pedidos");
 class Reservado extends PedidoState {
   name() {
-    return "reservado";
+    return ESTADOS_PEDIDOS.RESERVADO;
   }
   allowed() {
-    return ["entregado", "cancelado"];
+    return [ESTADOS_PEDIDOS.ENTREGADO, ESTADOS_PEDIDOS.CANCELADO];
   }
 
   async to(target) {

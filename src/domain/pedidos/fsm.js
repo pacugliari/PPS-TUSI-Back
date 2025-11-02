@@ -1,5 +1,5 @@
-// src/domain/pedidos/fsm.js
 const HttpError = require("../../utils/http-error");
+const { ESTADOS_PEDIDOS } = require("../../constants/pedidos");
 
 const { Pendiente } = require("./states/pendiente");
 const { Reservado } = require("./states/reservado");
@@ -10,13 +10,13 @@ const { Cancelado } = require("./states/cancelado");
 const { Devuelto } = require("./states/devuelto");
 
 const REGISTRY = {
-  pendiente: Pendiente,
-  reservado: Reservado,
-  pagado: Pagado,
-  enviado: Enviado,
-  entregado: Entregado,
-  cancelado: Cancelado,
-  devuelto: Devuelto,
+  [ESTADOS_PEDIDOS.PENDIENTE]: Pendiente,
+  [ESTADOS_PEDIDOS.RESERVADO]: Reservado,
+  [ESTADOS_PEDIDOS.PAGADO]: Pagado,
+  [ESTADOS_PEDIDOS.ENVIADO]: Enviado,
+  [ESTADOS_PEDIDOS.ENTREGADO]: Entregado,
+  [ESTADOS_PEDIDOS.CANCELADO]: Cancelado,
+  [ESTADOS_PEDIDOS.DEVUELTO]: Devuelto,
 };
 
 class OrderFSM {
@@ -37,12 +37,18 @@ class OrderFSM {
       .trim()
       .toLowerCase();
     if (!target) throw new HttpError(400, "Estado destino requerido");
+
+    if (!Object.values(ESTADOS_PEDIDOS).includes(target)) {
+      throw new HttpError(400, `Estado destino inválido: ${target}`);
+    }
+
     if (!this.state.allowed().includes(target)) {
       throw new HttpError(
         400,
         `Transición no permitida: ${this.state.name()} → ${target}`
       );
     }
+
     return this.state.to(target);
   }
 

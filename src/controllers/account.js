@@ -8,6 +8,9 @@ const pedidoService = require("../services/pedido");
 const comentarioService = require("../services/comentario");
 const accountService = require("../services/account");
 const ResponseBuilder = require("../utils/api-response");
+const { transitionService } = require("../services/pedido");
+const { ROLES } = require("../constants/roles");
+const { ESTADOS_PEDIDOS } = require("../constants/pedidos");
 
 const getAccountAddressesController = async (req, res) => {
   try {
@@ -133,7 +136,7 @@ const getCardsController = async (req, res) => {
   }
 };
 
-const getOrderDetailController = async (req, res) => {
+const getPurchasesDetailController = async (req, res) => {
   try {
     const detail = await pedidoService.getOrderDetailByIdService(req);
     res
@@ -214,7 +217,7 @@ const putProfileController = async (req, res) => {
   }
 };
 
-const getOrdersController = async (req, res) => {
+const getPurchasesController = async (req, res) => {
   try {
     const orders = await pedidoService.getOrdersByUserService(req);
     res
@@ -228,7 +231,7 @@ const getOrdersController = async (req, res) => {
   }
 };
 
-const postOrderRateController = async (req, res) => {
+const postPurchasesRateController = async (req, res) => {
   try {
     const result = await comentarioService.createService(req);
     res
@@ -337,6 +340,60 @@ const deleteProductController = async (req, res) => {
   }
 };
 
+const getOrdersController = async (req, res) => {
+  const rol = req.user?.role;
+  const orders = await pedidoService.getAllService();
+
+  const filteredOrders =
+    rol === ROLES.DELIVERY
+      ? orders.filter(
+          (o) => String(o.estado).toLowerCase() === ESTADOS_PEDIDOS.ENVIADO
+        )
+      : orders;
+
+  return res
+    .status(200)
+    .json(
+      ResponseBuilder.success(
+        filteredOrders,
+        "Pedidos consultados exitosamente"
+      )
+    );
+};
+
+const getOrderDetailController = async (req, res) => {
+  const detail = await pedidoService.getByIdService(req);
+  res
+    .status(200)
+    .json(
+      ResponseBuilder.success(
+        detail,
+        "Detalle de pedido consultado exitosamente"
+      )
+    );
+};
+
+const postOrdersCancelController = async (req, res) => {
+  const data = await transitionService(req);
+  res
+    .status(200)
+    .json(ResponseBuilder.success(data, "Pedido cancelado correctamente"));
+};
+
+const postOrdersSentController = async (req, res) => {
+  const data = await transitionService(req);
+  res
+    .status(200)
+    .json(ResponseBuilder.success(data, "Pedido enviado correctamente"));
+};
+
+const postOrdersDeliveredController = async (req, res) => {
+  const data = await transitionService(req);
+  res
+    .status(200)
+    .json(ResponseBuilder.success(data, "Pedido entregado correctamente"));
+};
+
 module.exports = {
   getAccountAddressesController,
   getFavoritesController,
@@ -351,12 +408,17 @@ module.exports = {
   getCardsOptionsController,
   getProfileController,
   putProfileController,
-  getOrdersController,
-  getOrderDetailController,
-  postOrderRateController,
+  getPurchasesController,
+  getPurchasesDetailController,
+  postPurchasesRateController,
   getProductsController,
   getProductsOptionsController,
   postProductController,
   putProductController,
   deleteProductController,
+  getOrdersController,
+  getOrderDetailController,
+  postOrdersCancelController,
+  postOrdersSentController,
+  postOrdersDeliveredController,
 };

@@ -1,10 +1,10 @@
 const HttpError = require("../utils/http-error");
 const tarjetaRepository = require("../repositories/tarjeta");
-
+const { TARJETAS_VALIDOS } = require("../constants/tarjetas");
 const getAllService = async (req) => {
   try {
     const { rows } = await tarjetaRepository.findAll();
-    return rows.filter(t => t.activo);
+    return rows.filter((t) => t.activo);
   } catch (err) {
     throw new HttpError(500, "No se pudieron obtener las tarjetas");
   }
@@ -13,7 +13,8 @@ const getAllService = async (req) => {
 const getByIdService = async (req) => {
   const { id } = req.params;
   const tarjeta = await tarjetaRepository.findById(id);
-  if (!tarjeta || !tarjeta.activo) throw new HttpError(404, "Tarjeta no encontrada");
+  if (!tarjeta || !tarjeta.activo)
+    throw new HttpError(404, "Tarjeta no encontrada");
   return { data: tarjeta };
 };
 
@@ -56,7 +57,7 @@ const createService = async (req) => {
     ]);
   }
 
-  if (!["VISA", "MASTERCARD"].includes(tipo)) {
+  if (!TARJETAS_VALIDOS.includes(tipo)) {
     throw new HttpError(400, "Tipo de tarjeta inválido").setErrors([
       { tipo: "El tipo de tarjeta debe ser VISA o MASTERCARD" },
     ]);
@@ -75,7 +76,10 @@ const createService = async (req) => {
     ]);
   }
 
-  const existente = await tarjetaRepository.findOne({ numero: numeroLimpio, idUsuario });
+  const existente = await tarjetaRepository.findOne({
+    numero: numeroLimpio,
+    idUsuario,
+  });
   if (existente && existente.activo) {
     throw new HttpError(400, "La tarjeta ya existe").setErrors([
       { numero: "Ya existe una tarjeta registrada con este número" },
@@ -98,7 +102,8 @@ const updateService = async (req) => {
   const { codigo } = req.body;
 
   const tarjeta = await tarjetaRepository.findById(id);
-  if (!tarjeta || !tarjeta.activo) throw new HttpError(404, "Tarjeta no encontrada");
+  if (!tarjeta || !tarjeta.activo)
+    throw new HttpError(404, "Tarjeta no encontrada");
 
   if (tarjeta.idUsuario !== req.user.id) {
     throw new HttpError(403, "No tienes permiso para modificar esta tarjeta");
@@ -123,7 +128,8 @@ const updateService = async (req) => {
 const deleteService = async (req) => {
   const { id } = req.params;
   const tarjeta = await tarjetaRepository.findById(id);
-  if (!tarjeta || !tarjeta.activo) throw new HttpError(404, "Tarjeta no encontrada");
+  if (!tarjeta || !tarjeta.activo)
+    throw new HttpError(404, "Tarjeta no encontrada");
   if (tarjeta.idUsuario !== req.user.id) {
     throw new HttpError(403, "No tienes permiso para modificar esta tarjeta");
   }

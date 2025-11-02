@@ -3,33 +3,7 @@ const HttpError = require("../utils/http-error");
 const { sequelize, Pedido } = require("../models");
 const { OrderFSM } = require("../domain/pedidos/fsm");
 
-const getAllService = async (req) => {
-  const pedidos = await pedidoRepository.findAll();
-  return pedidos;
-};
-
-const getByIdService = async (req) => {
-  const { id } = req.params;
-  const pedido = await pedidoRepository.findById(id);
-  if (!pedido) throw new HttpError(404, "Pedido no encontrado");
-  return pedido;
-};
-
-const getOrdersByUserService = async (req) => {
-  const idUsuario = req.user?.id;
-  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
-  const rows = await pedidoRepository.findByUserId(idUsuario);
-  return rows;
-};
-
-const getOrderDetailByIdService = async (req) => {
-  const idUsuario = req.user?.id;
-  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
-  const { id } = req.params;
-
-  const pedido = await pedidoRepository.findByIdAndUserWithItems(id, idUsuario);
-  if (!pedido) throw new HttpError(404, "Pedido no encontrado");
-
+const adaptPedido = (pedido) => {
   const toNum = (v) => {
     const n = Number.parseFloat(v ?? 0);
     return Number.isFinite(n) ? n : 0;
@@ -77,6 +51,36 @@ const getOrderDetailByIdService = async (req) => {
     porcentajeCupon: round2(toNum(pedido.porcentajeCupon)),
     porcentajeBanco: round2(toNum(pedido.porcentajeBanco)),
   };
+};
+
+const getAllService = async (req) => {
+  const pedidos = await pedidoRepository.findAll(req);
+  return pedidos.rows;
+};
+
+const getByIdService = async (req) => {
+  const { id } = req.params;
+  const pedido = await pedidoRepository.findById(id);
+  if (!pedido) throw new HttpError(404, "Pedido no encontrado");
+  return adaptPedido(pedido);
+};
+
+const getOrdersByUserService = async (req) => {
+  const idUsuario = req.user?.id;
+  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
+  const rows = await pedidoRepository.findByUserId(idUsuario);
+  return rows;
+};
+
+const getOrderDetailByIdService = async (req) => {
+  const idUsuario = req.user?.id;
+  if (!idUsuario) throw new HttpError(401, "Usuario no autenticado");
+  const { id } = req.params;
+
+  const pedido = await pedidoRepository.findByIdAndUserWithItems(id, idUsuario);
+  if (!pedido) throw new HttpError(404, "Pedido no encontrado");
+
+  return adaptPedido(pedido);
 };
 
 const getAllowedTransitionsService = async (req) => {

@@ -1,12 +1,72 @@
-const { Pedido, DetallePedido, Producto, Comentario } = require("../models");
+const {
+  Pedido,
+  DetallePedido,
+  Producto,
+  Comentario,
+  Usuario,
+  Perfil,
+} = require("../models");
 
 async function findAll() {
-  const rows = await Pedido.findAll();
+  const rows = await Pedido.findAll({
+    where: { activo: true },
+    include: [
+      {
+        model: Usuario,
+        as: "usuario",
+        attributes: ["idUsuario", "compraOnline", "email"],
+        include: [
+          {
+            model: Perfil,
+            as: "perfil",
+            attributes: [
+              "idPerfil",
+              "nombre",
+              "tipoDocumento",
+              "dni",
+              "telefono",
+            ],
+          },
+        ],
+      },
+    ],
+    attributes: { exclude: ["activo"] },
+  });
   return { rows: rows.map((r) => r.get({ plain: true })) };
 }
 
-async function findById(id) {
-  const row = await Pedido.findByPk(id);
+async function findById(idPedido) {
+  const row = await Pedido.findOne({
+    where: { idPedido },
+    attributes: [
+      "idPedido",
+      ["createdAt", "fecha"],
+      "estado",
+      "impuestos",
+      "subtotal",
+      "total",
+      "formaPago",
+      "descuentoCupon",
+      "descuentoBanco",
+      "porcentajeCupon",
+      "porcentajeBanco",
+      "costoEnvio",
+    ],
+    include: [
+      {
+        model: DetallePedido,
+        as: "detalles",
+        attributes: ["idDetallePedido", "cantidad", "precio"],
+        include: [
+          {
+            model: Producto,
+            as: "producto",
+            attributes: ["idProducto", "nombre", "iva"],
+          },
+        ],
+      },
+    ],
+  });
   return row ? row.get({ plain: true }) : null;
 }
 

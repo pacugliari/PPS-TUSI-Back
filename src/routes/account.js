@@ -17,14 +17,19 @@ const {
   getCardsOptionsController,
   getProfileController,
   putProfileController,
+  getPurchasesController,
+  getPurchasesDetailController,
+  postPurchasesRateController,
   getOrdersController,
   getOrderDetailController,
-  postOrderRateController,
   getProductsController,
   getProductsOptionsController,
   postProductController,
   putProductController,
   deleteProductController,
+  postOrdersCancelController,
+  postOrdersSentController,
+  postOrdersDeliveredController,
 } = require("../controllers/account");
 
 const {
@@ -90,7 +95,7 @@ const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
 
 router.use(
-  ["/addresses", "/favorites", "/cards", "/profile", "/orders"],
+  ["/addresses", "/favorites", "/cards", "/profile", "/purchases"],
   requireAnyRole(ROLES.USUARIO)
 );
 
@@ -115,10 +120,10 @@ router.delete("/cards/:id", deleteCardsController);
 router.get("/profile", getProfileController);
 router.put("/profile", putProfileController);
 
-// ORDERS
-router.get("/orders", getOrdersController);
-router.get("/orders/:id", getOrderDetailController);
-router.post("/orders/:idProducto/rate", postOrderRateController);
+// PURCHASES
+router.get("/purchases", getPurchasesController);
+router.get("/purchases/:id", getPurchasesDetailController);
+router.post("/purchases/:idProducto/rate", postPurchasesRateController);
 
 // ADMIN y OPERARIO
 router.use("/coupons", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
@@ -182,11 +187,24 @@ router.delete("/subcategories/:id", deleteSubcategoriesController);
 
 router.use("/products", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
 
-
 router.get("/products", getProductsController);
 router.get("/products/options", getProductsOptionsController);
-router.post("/products",uploadFotos.array("fotos", 3), postProductController);
-router.put("/products/:id",uploadFotos.array("fotos", 3), putProductController);
+router.post("/products", uploadFotos.array("fotos", 3), postProductController);
+router.put(
+  "/products/:id",
+  uploadFotos.array("fotos", 3),
+  putProductController
+);
 router.delete("/products/:id", deleteProductController);
+
+router.use(
+  "/orders",
+  requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO, ROLES.DELIVERY)
+);
+router.get("/orders", getOrdersController);
+router.get("/orders/:id", getOrderDetailController);
+router.post("/orders/cancel/:id", postOrdersCancelController);
+router.post("/orders/sent/:id", postOrdersSentController);
+router.post("/orders/delivered/:id", postOrdersDeliveredController);
 
 module.exports = router;

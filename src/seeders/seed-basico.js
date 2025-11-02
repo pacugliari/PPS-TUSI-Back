@@ -2,7 +2,9 @@
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const { initDb } = require("../config/sequelize");
-
+const { ESTADOS_PEDIDOS, FORMAS_PAGO } = require("../constants/pedidos");
+const { ESTADOS_ORDEN_COMPRA } = require("../constants/ordencompra");
+const { TARJETAS } = require("../constants/tarjetas");
 const {
   // base
   Banco,
@@ -72,6 +74,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
           permisos: ["pedidos:read", "stock:update"],
         },
         { idRol: 3, nombre: "Usuario", tipo: "usuario", permisos: [] },
+        { idRol: 4, nombre: "Delivery", tipo: "delivery", permisos: [] },
       ],
       { ignoreDuplicates: true }
     );
@@ -207,6 +210,13 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
           email: "usuario@mail.com",
           password: await bcrypt.hash("hashdemo123", 10),
         },
+        {
+          idUsuario: 4,
+          idRol: 4,
+          compraOnline: false,
+          email: "delivery@mail.com",
+          password: await bcrypt.hash("hashdemo123", 10),
+        },
       ],
       { ignoreDuplicates: true }
     );
@@ -265,7 +275,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
           idTarjeta: 1,
           idUsuario: userId,
           idBanco: 5,
-          tipo: "VISA",
+          tipo: TARJETAS.VISA,
           codigo: "123",
           numero: "4111 1111 1111 1111",
           activo: true,
@@ -274,7 +284,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
           idTarjeta: 2,
           idUsuario: userId,
           idBanco: 6,
-          tipo: "MASTERCARD",
+          tipo: TARJETAS.MASTERCARD,
           codigo: "456",
           numero: "5500 0000 0000 0004",
           activo: true,
@@ -427,8 +437,10 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       pedidosData.push({
         idPedido: i,
         idUsuario: userId,
-        formaPago: electronico ? "electronico" : "efectivo",
-        estado: electronico ? "pagado" : "pendiente",
+        formaPago: electronico ? FORMAS_PAGO.ELECTRONICO : FORMAS_PAGO.EFECTIVO,
+        estado: electronico
+          ? ESTADOS_PEDIDOS.PAGADO
+          : ESTADOS_PEDIDOS.PENDIENTE,
         subtotalBruto: precioBruto, // 🔹 nuevo campo
         subtotal: baseImponible, // base imponible (tras descuentos)
         impuestos,
@@ -438,6 +450,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         porcentajeBanco: 12,
         costoEnvio,
         total,
+        activo: true,
       });
 
       detallesData.push(
@@ -484,7 +497,10 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     for (let i = 1; i <= 5; i++) {
       ocs.push({
         idOrdenCompra: i,
-        estado: i < 4 ? "pendiente" : "entregado",
+        estado:
+          i < 4
+            ? ESTADOS_ORDEN_COMPRA.PENDIENTE
+            : ESTADOS_ORDEN_COMPRA.ENTREGADO,
         subtotal: 500000 + i * 10000,
         impuestos: 0,
         total: 500000 + i * 10000,
