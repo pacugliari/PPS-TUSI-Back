@@ -370,17 +370,28 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     });
     await Producto.bulkCreate(productos, { ignoreDuplicates: true });
 
-    const stocks = productos.map((p) => ({
-      idStock: p.idProducto, // mismo id para que sea determinístico
-      idProducto: p.idProducto,
-      stockMinimo: 5,
-      stockMaximo: 200,
-      stockActual: p.stock,
-      reservado: 0,
-      comprometido: 0,
-      disponibilidad: p.stock,
-      estado: "disponible",
-    }));
+    const comprometidoMap = {
+      1: 2,
+      2: 3,
+      3: 1,
+      4: 4,
+      5: 4,
+      6: 2,
+    };
+    const stocks = productos.map((p) => {
+      const comprometido = comprometidoMap[p.idProducto] || 0;
+      return {
+        idStock: p.idProducto, // mismo id para que sea determinístico
+        idProducto: p.idProducto,
+        stockMinimo: 5,
+        stockMaximo: 200,
+        stockActual: p.stock,
+        reservado: 0,
+        comprometido,
+        disponibilidad: p.stock - comprometido,
+        estado: "disponible",
+      };
+    });
     await Stock.bulkCreate(stocks, { ignoreDuplicates: true });
 
     const propiedades = [];
