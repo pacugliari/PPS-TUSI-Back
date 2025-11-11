@@ -20,6 +20,7 @@ const {
   getPurchasesController,
   getPurchasesDetailController,
   postPurchasesRateController,
+  postPurchasesReturnController,
   getOrdersController,
   getOrderDetailController,
   getProductsController,
@@ -120,10 +121,23 @@ router.delete("/cards/:id", deleteCardsController);
 router.get("/profile", getProfileController);
 router.put("/profile", putProfileController);
 
+// RETURNS
+const {
+  getAllController: getAllReturnsController,
+  getUserController: getUserReturnsController,
+  approveController: approveReturnController,
+  rejectController: rejectReturnController,
+  confirmController: confirmReturnController,
+} = require("../controllers/devolucion");
+
 // PURCHASES
 router.get("/purchases", getPurchasesController);
 router.get("/purchases/:id", getPurchasesDetailController);
 router.post("/purchases/:idProducto/rate", postPurchasesRateController);
+router.post(
+  "/purchases/:idPedido/returns/:idProducto",
+  postPurchasesReturnController
+);
 
 // ADMIN y OPERARIO
 router.use("/coupons", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
@@ -206,5 +220,14 @@ router.get("/orders/:id", getOrderDetailController);
 router.post("/orders/cancel/:id", postOrdersCancelController);
 router.post("/orders/sent/:id", postOrdersSentController);
 router.post("/orders/delivered/:id", postOrdersDeliveredController);
+
+router.use("/returns/user", requireAnyRole(ROLES.USUARIO));
+router.get("/returns/user", getUserReturnsController);
+
+router.use("/returns/admin", requireAnyRole(ROLES.ADMIN));
+router.get("/returns/admin", getAllReturnsController);
+router.patch("/returns/admin/:id/approve", approveReturnController);
+router.patch("/returns/admin/:id/reject", rejectReturnController);
+router.patch("/returns/admin/:id/confirm", confirmReturnController);
 
 module.exports = router;

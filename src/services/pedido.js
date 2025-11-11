@@ -2,7 +2,7 @@ const pedidoRepository = require("../repositories/pedido");
 const HttpError = require("../utils/http-error");
 const { sequelize, Pedido } = require("../models");
 const { OrderFSM } = require("../domain/pedidos/fsm");
-
+const { ESTADOS_DEVOLUCION } = require("../constants/devolucion");
 const adaptPedido = (pedido) => {
   const toNum = (v) => {
     const n = Number.parseFloat(v ?? 0);
@@ -18,6 +18,10 @@ const adaptPedido = (pedido) => {
 
     const opinion = d.producto?.comentarios?.[0] || null;
 
+    const devolucionActiva = (d.producto?.devoluciones || []).some(
+      (dev) => dev.activo === true
+    );
+
     return {
       idProducto: d.producto?.idProducto,
       articulo: d.producto?.nombre,
@@ -25,6 +29,7 @@ const adaptPedido = (pedido) => {
       cantidad,
       subtotal: subtotalItem,
       calificado: !!opinion,
+      enDevolucion: devolucionActiva,
       iva: ivaPct,
     };
   });
@@ -40,6 +45,7 @@ const adaptPedido = (pedido) => {
 
   return {
     idPedido: pedido.idPedido,
+    estado: pedido.estado,
     items,
     subtotalBruto,
     baseImponible,

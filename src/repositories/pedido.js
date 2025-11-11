@@ -5,6 +5,7 @@ const {
   Comentario,
   Usuario,
   Perfil,
+  Devolucion,
 } = require("../models");
 
 async function findAll() {
@@ -128,6 +129,23 @@ async function findByIdAndUserWithItems(idPedido, idUsuario) {
                 ],
                 limit: 1,
                 order: [["createdAt", "DESC"]],
+              },
+              {
+                model: Devolucion,
+                as: "devoluciones",
+                required: false,
+                where: {
+                  idPedido,
+                  activo: true,
+                },
+                attributes: [
+                  "idDevolucion",
+                  "motivo",
+                  "comentario",
+                  "estado",
+                  "activo",
+                  "fecha",
+                ],
               },
             ],
           },

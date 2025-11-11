@@ -11,6 +11,7 @@ const ResponseBuilder = require("../utils/api-response");
 const { transitionService } = require("../services/pedido");
 const { ROLES } = require("../constants/roles");
 const { ESTADOS_PEDIDOS } = require("../constants/pedidos");
+const devolucionService = require("../services/devolucion");
 
 const getAccountAddressesController = async (req, res) => {
   try {
@@ -394,6 +395,15 @@ const postOrdersDeliveredController = async (req, res) => {
     .json(ResponseBuilder.success(data, "Pedido entregado correctamente"));
 };
 
+const postPurchasesReturnController = async (req, res) => {
+  const result = await devolucionService.createService(req);
+  res
+    .status(201)
+    .json(
+      ResponseBuilder.success(result, "Devolución registrada exitosamente", 201)
+    );
+};
+
 module.exports = {
   getAccountAddressesController,
   getFavoritesController,
@@ -421,4 +431,5 @@ module.exports = {
   postOrdersCancelController,
   postOrdersSentController,
   postOrdersDeliveredController,
+  postPurchasesReturnController,
 };

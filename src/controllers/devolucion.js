@@ -1,5 +1,11 @@
 const ResponseBuilder = require("../utils/api-response");
-const { getAllService, getByIdService } = require("../services/devolucion");
+const {
+  getAllService,
+  getByUserService,
+  approveService,
+  rejectService,
+  confirmService,
+} = require("../services/devolucion");
 
 const getAllController = async (req, res) => {
   res.status(200).json(
@@ -10,16 +16,46 @@ const getAllController = async (req, res) => {
   );
 };
 
-const getByIdController = async (req, res) => {
+const getUserController = async (req, res) => {
   res.status(200).json(
     ResponseBuilder.success(
-      await getByIdService(req),
-      "Devolución consultada exitosamente"
+      await getByUserService(req),
+      "Devoluciones consultadas exitosamente"
+    )
+  );
+};
+
+const approveController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await approveService(req),
+      "Devolución aprobada exitosamente"
+    )
+  );
+};
+
+const rejectController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await rejectService(req),
+      "Devolución rechazada exitosamente"
+    )
+  );
+};
+
+const confirmController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await confirmService(req),
+      "Devolución confirmada exitosamente"
     )
   );
 };
 
 module.exports = {
   getAllController,
-  getByIdController
+  getUserController,
+  approveController,
+  rejectController,
+  confirmController,
 };

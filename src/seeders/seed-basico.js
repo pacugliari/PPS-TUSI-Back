@@ -534,6 +534,11 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     }
     await ItemOrdenCompra.bulkCreate(itemsOc, { ignoreDuplicates: true });
 
+    // ✅ Marcar pedidos 1 y 2 como entregados para permitir devoluciones
+    await Pedido.update(
+      { estado: ESTADOS_PEDIDOS.ENTREGADO },
+      { where: { idPedido: [1, 2] } }
+    );
     /* =========================
      *  DEVOLUCIONES (2) sobre pedidos electrónicos
      * ========================= */
