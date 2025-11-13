@@ -247,15 +247,31 @@ router.patch("/returns/admin/:id/confirm", confirmReturnController);
 router.use("/carousel-principal", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
 
 router.get("/carousel-principal", getAllCarouselPrincipalController);
-router.post("/carousel-principal", createCarouselPrincipalController);
-router.put("/carousel-principal/:id", updateCarouselPrincipalController);
+router.post(
+  "/carousel-principal",
+  uploadFotos.single("foto"),
+  createCarouselPrincipalController
+);
+router.put(
+  "/carousel-principal/:id",
+  uploadFotos.single("foto"),
+  updateCarouselPrincipalController
+);
 router.delete("/carousel-principal/:id", deleteCarouselPrincipalController);
 
 router.use("/carousel-marcas", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
 
 router.get("/carousel-marcas", getAllCarouselMarcasController);
-router.post("/carousel-marcas", createCarouselMarcasController);
-router.put("/carousel-marcas/:id", updateCarouselMarcasController);
+router.post(
+  "/carousel-marcas",
+  uploadFotos.single("foto"),
+  createCarouselMarcasController
+);
+router.put(
+  "/carousel-marcas/:id",
+  uploadFotos.single("foto"),
+  updateCarouselMarcasController
+);
 router.delete("/carousel-marcas/:id", deleteCarouselMarcasController);
 
 module.exports = router;
