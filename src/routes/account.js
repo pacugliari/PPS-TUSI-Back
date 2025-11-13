@@ -92,6 +92,20 @@ const {
   getOptionsController: getBankPromosOptionsController,
 } = require("../controllers/promocionbancaria");
 
+const {
+  getAllController: getAllCarouselPrincipalController,
+  createController: createCarouselPrincipalController,
+  updateController: updateCarouselPrincipalController,
+  deleteController: deleteCarouselPrincipalController,
+} = require("../controllers/carrusel_principal");
+
+const {
+  getAllController: getAllCarouselMarcasController,
+  createController: createCarouselMarcasController,
+  updateController: updateCarouselMarcasController,
+  deleteController: deleteCarouselMarcasController,
+} = require("../controllers/carrusel_marcas");
+
 const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
 
@@ -229,5 +243,19 @@ router.get("/returns/admin", getAllReturnsController);
 router.patch("/returns/admin/:id/approve", approveReturnController);
 router.patch("/returns/admin/:id/reject", rejectReturnController);
 router.patch("/returns/admin/:id/confirm", confirmReturnController);
+
+router.use("/carousel-principal", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/carousel-principal", getAllCarouselPrincipalController);
+router.post("/carousel-principal", createCarouselPrincipalController);
+router.put("/carousel-principal/:id", updateCarouselPrincipalController);
+router.delete("/carousel-principal/:id", deleteCarouselPrincipalController);
+
+router.use("/carousel-marcas", requireAnyRole(ROLES.ADMIN, ROLES.OPERARIO));
+
+router.get("/carousel-marcas", getAllCarouselMarcasController);
+router.post("/carousel-marcas", createCarouselMarcasController);
+router.put("/carousel-marcas/:id", updateCarouselMarcasController);
+router.delete("/carousel-marcas/:id", deleteCarouselMarcasController);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const { initDb } = require("../config/sequelize");
 const { ESTADOS_PEDIDOS, FORMAS_PAGO } = require("../constants/pedidos");
 const { ESTADOS_ORDEN_COMPRA } = require("../constants/ordencompra");
 const { TARJETAS } = require("../constants/tarjetas");
+
 const {
   // base
   Banco,
@@ -16,11 +17,13 @@ const {
   Caracteristica,
   Usuario,
   Direccion,
+
   // previos
   Perfil,
   Tarjeta,
   Cupon,
   PromocionBancaria,
+
   // catálogo / ventas / compras
   Producto,
   Stock,
@@ -32,6 +35,10 @@ const {
   OrdenCompra,
   ItemOrdenCompra,
   Devolucion,
+
+  // ➕ agregamos los dos nuevos modelos
+  CarruselPrincipal,
+  CarruselMarcas,
 } = require("../models");
 
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -224,6 +231,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     const user3 = await Usuario.findOne({
       where: { email: "usuario@mail.com" },
     });
+
     const userId = user3?.idUsuario ?? 3;
 
     await Perfil.bulkCreate(
@@ -267,7 +275,6 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       },
     ];
     await Direccion.bulkCreate(direcciones, { ignoreDuplicates: true });
-    const dirUser = direcciones[0];
 
     await Tarjeta.bulkCreate(
       [
@@ -347,7 +354,80 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     );
 
     /* =========================
-     *  PRODUCTOS (10) + STOCK + PROPIEDADES (5 c/u) + COMENTARIOS (5 c/u)
+     *  SLIDER PRINCIPAL (1900x800)
+     * ========================= */
+    if (CarruselPrincipal) {
+      await CarruselPrincipal.bulkCreate(
+        [
+          {
+            idCarruselPrincipal: 1,
+            titulo: "PCs armadas y a medida",
+            descripcion:
+              "Equipos listos para usar o configurados por vos. Potencia para trabajar, crear y jugar.",
+            imagenUrl:
+              "https://dummyimage.com/1900x800/cccccc/000000&text=Slide+1",
+            link: "/pcs-armadas",
+            orden: 1,
+            activo: true,
+          },
+          {
+            idCarruselPrincipal: 2,
+            titulo: "Ofertas imperdibles",
+            descripcion: "Descuentos en tecnología por tiempo limitado.",
+            imagenUrl:
+              "https://dummyimage.com/1900x800/bbbbbb/000000&text=Slide+2",
+            link: "/ofertas",
+            orden: 2,
+            activo: true,
+          },
+          {
+            idCarruselPrincipal: 3,
+            titulo: "Gaming Pro",
+            descripcion: "El mejor hardware para dominar el juego.",
+            imagenUrl:
+              "https://dummyimage.com/1900x800/aaaaaa/000000&text=Slide+3",
+            link: "/gaming",
+            orden: 3,
+            activo: true,
+          },
+        ],
+        { ignoreDuplicates: true }
+      );
+    }
+
+    /* =========================
+     *  CARRUSEL DE MARCAS (1024x1024)
+     * ========================= */
+    if (CarruselMarcas) {
+      const marcasCarrusel = [
+        "Acer",
+        "Asus",
+        "Lenovo",
+        "HP",
+        "Dell",
+        "Logitech",
+        "MSI",
+        "Gigabyte",
+        "Kingston",
+        "Samsung",
+      ];
+
+      await CarruselMarcas.bulkCreate(
+        marcasCarrusel.map((nombre, i) => ({
+          idCarruselMarcas: i + 1,
+          nombre,
+          logoUrl: `https://dummyimage.com/1024x1024/000000/ffffff&text=${encodeURIComponent(
+            nombre
+          )}`,
+          orden: i + 1,
+          activo: true,
+        })),
+        { ignoreDuplicates: true }
+      );
+    }
+
+    /* =========================
+     *  PRODUCTOS (10)
      * ========================= */
     const productos = Array.from({ length: 10 }, (_, i) => {
       const idx = i + 1;
@@ -381,7 +461,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     const stocks = productos.map((p) => {
       const comprometido = comprometidoMap[p.idProducto] || 0;
       return {
-        idStock: p.idProducto, // mismo id para que sea determinístico
+        idStock: p.idProducto,
         idProducto: p.idProducto,
         stockMinimo: 5,
         stockMaximo: 200,
@@ -415,7 +495,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         comentarios.push({
           idComentario: comId++,
           idProducto: p.idProducto,
-          idUsuario: ((p.idProducto + j) % 3) + 1, // 1..3
+          idUsuario: ((p.idProducto + j) % 3) + 1,
           puntuacion: rand(3, 5),
           comentario: `Comentario ${j} del producto ${p.idProducto}`,
         });
@@ -424,7 +504,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     await Comentario.bulkCreate(comentarios, { ignoreDuplicates: true });
 
     /* =========================
-     *  PEDIDOS (5) -> 3 electrónicos (con Envío) + 2 efectivo (sin Envío)
+     *  PEDIDOS
      * ========================= */
     const pedidosData = [];
     const detallesData = [];
@@ -437,10 +517,10 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
       const cant1 = (i % 3) + 1;
       const cant2 = (i % 2) + 1;
 
-      const precioBruto = Number(p1.precio) * cant1 + Number(p2.precio) * cant2; // sin IVA, sin desc.
-      const descCupon = +(precioBruto * 0.1).toFixed(2); // 10%
-      const descBanco = +(precioBruto * 0.12).toFixed(2); // 12%
-      const baseImponible = +(precioBruto - descCupon - descBanco).toFixed(2); // tras desc.
+      const precioBruto = Number(p1.precio) * cant1 + Number(p2.precio) * cant2;
+      const descCupon = +(precioBruto * 0.1).toFixed(2);
+      const descBanco = +(precioBruto * 0.12).toFixed(2);
+      const baseImponible = +(precioBruto - descCupon - descBanco).toFixed(2);
       const impuestos = +(baseImponible * 0.21).toFixed(2);
       const costoEnvio = electronico ? 300 : 0;
       const total = +(baseImponible + impuestos + costoEnvio).toFixed(2);
@@ -452,8 +532,8 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         estado: electronico
           ? ESTADOS_PEDIDOS.PAGADO
           : ESTADOS_PEDIDOS.PENDIENTE,
-        subtotalBruto: precioBruto, // 🔹 nuevo campo
-        subtotal: baseImponible, // base imponible (tras descuentos)
+        subtotalBruto: precioBruto,
+        subtotal: baseImponible,
         impuestos,
         descuentoCupon: descCupon,
         descuentoBanco: descBanco,
@@ -489,7 +569,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         enviosData.push({
           idEnvio: i,
           idPedido: i,
-          idDireccion: dirUser.idDireccion,
+          idDireccion: direcciones[0].idDireccion,
           precio: costoEnvio,
         });
       }
@@ -502,7 +582,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     /* =========================
-     *  ORDENES DE COMPRA (5) con 2 items cada una
+     *  ORDENES DE COMPRA
      * ========================= */
     const ocs = [];
     for (let i = 1; i <= 5; i++) {
@@ -528,19 +608,19 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
           idItemOrdenCompra: itemId++,
           idOrdenCompra: i,
           idProducto: p.idProducto,
-          cantidad: 5 + k * 5, // 5 y 10
+          cantidad: 5 + k * 5,
         });
       }
     }
     await ItemOrdenCompra.bulkCreate(itemsOc, { ignoreDuplicates: true });
 
-    // ✅ Marcar pedidos 1 y 2 como entregados para permitir devoluciones
     await Pedido.update(
       { estado: ESTADOS_PEDIDOS.ENTREGADO },
       { where: { idPedido: [1, 2] } }
     );
+
     /* =========================
-     *  DEVOLUCIONES (2) sobre pedidos electrónicos
+     *  DEVOLUCIONES
      * ========================= */
     const devoluciones = [
       {
@@ -562,9 +642,7 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     ];
     await Devolucion.bulkCreate(devoluciones, { ignoreDuplicates: true });
 
-    console.log(
-      "✅ Seed completísimo: productos(10), pedidos(5), OC(5), devoluciones(2), comentarios(50), propiedades(50)."
-    );
+    console.log("✅ SEED COMPLETO EJECUTADO CON ÉXITO");
     process.exit(0);
   } catch (e) {
     console.error("❌ Error en seed:", e);

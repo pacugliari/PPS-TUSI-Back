@@ -33,6 +33,9 @@ const ItemOrdenCompra = require("./itemordencompra")(sequelize);
 
 const Devolucion = require("./devolucion")(sequelize);
 
+const CarruselPrincipal = require("./carrusel_principal")(sequelize);
+const CarruselMarcas = require("./carrusel_marcas")(sequelize);
+
 /* =========================
  *  Asociaciones base
  * ========================= */
@@ -265,4 +268,7 @@ module.exports = {
   ItemOrdenCompra,
   // Post-venta
   Devolucion,
+  //Carrusel
+  CarruselPrincipal,
+  CarruselMarcas,
 };
