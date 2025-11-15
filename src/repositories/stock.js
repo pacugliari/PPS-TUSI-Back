@@ -1,4 +1,4 @@
-const { Stock } = require("../models");
+const { Stock, Producto } = require("../models");
 
 async function findAll() {
   const rows = await Stock.findAll();
@@ -10,4 +10,18 @@ async function findById(id) {
   return row ? row.get({ plain: true }) : null;
 }
 
-module.exports = { findAll, findById };
+async function findAllWithProducto() {
+  const rows = await Stock.findAll({
+    include: [
+      {
+        model: Producto,
+        as: "producto",
+        attributes: ["idProducto", "nombre"],
+        required: true,
+      },
+    ],
+  });
+  return { rows: rows.map((r) => r.get({ plain: true })) };
+}
+
+module.exports = { findAll, findById, findAllWithProducto };

@@ -48,6 +48,8 @@ const {
   updateController: updateZonesController,
 } = require("../controllers/zona");
 
+const { getStocksReviewController } = require("../controllers/stock");
+
 const {
   getAllController: getAllBanksController,
   createController: createBanksController,
@@ -273,5 +275,7 @@ router.put(
   updateCarouselMarcasController
 );
 router.delete("/carousel-marcas/:id", deleteCarouselMarcasController);
+
+router.get("/stocks/purchase-orders", requireAnyRole(ROLES.ADMIN), getStocksReviewController);
 
 module.exports = router;

@@ -19,7 +19,17 @@ const getByIdController = async (req, res) => {
   );
 };
 
+const getStocksReviewController = async (req, res) => {
+  res.status(200).json(
+    ResponseBuilder.success(
+      await stockService.getReviewService(req),
+      "Revisión de stock realizada exitosamente"
+    )
+  );
+};
+
 module.exports = {
   getAllController,
   getByIdController,
+  getStocksReviewController,
 };
