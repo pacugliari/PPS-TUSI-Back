@@ -19,7 +19,6 @@ const getByIdController = async (req, res) => {
   );
 };
 
-// GET /account/stocks/review (solo ADMIN)
 const getStocksReviewController = async (req, res) => {
   res.status(200).json(
     ResponseBuilder.success(

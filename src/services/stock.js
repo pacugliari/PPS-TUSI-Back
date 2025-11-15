@@ -17,7 +17,6 @@ const getByIdService = async (req) => {
   return { data: stock };
 };
 
-// GET /account/stocks/review (solo ADMIN)
 const getReviewService = async (req) => {
 
   const { rows } = await stockRepository.findAllWithProducto();
@@ -34,7 +33,6 @@ const getReviewService = async (req) => {
     const stockMaximo = toNum(r.stockMaximo);
     const reservado = toNum(r.reservado);
     const comprometido = toNum(r.comprometido);
-    // Usar disponibilidad que viene de DB; si no está, calcularla
     const disponibilidad = Math.max(
       0,
       Number.isFinite(toNum(r.disponibilidad))
@@ -42,7 +40,6 @@ const getReviewService = async (req) => {
         : stockActual - reservado - comprometido
     );
 
-    // Necesita reposición cuando la disponibilidad real está por debajo del mínimo
     if (disponibilidad < stockMinimo) {
       const cantidadAReponer = Math.max(0, stockMaximo - disponibilidad);
       result.push({
@@ -50,7 +47,7 @@ const getReviewService = async (req) => {
         nombre: r.producto?.nombre,
         stockActual,
         stockMinimo,
-  stockMaximo,
+        stockMaximo,
         reservado,
         comprometido,
         disponibilidad,
