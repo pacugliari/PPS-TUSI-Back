@@ -108,6 +108,13 @@ const {
   deleteController: deleteCarouselMarcasController,
 } = require("../controllers/carrusel_marcas");
 
+const {
+  getAllController: getAllPurchaseOrderController,
+  getByIdController: getByIdPurchaseOrderController,
+  createController: createPurchaseOrderController,
+  markDeliveredController: markDeliveredPurchaseOrderController,
+} = require("../controllers/ordencompra");
+
 const { ROLES } = require("../constants/roles");
 const { requireAnyRole } = require("../middlewares/preAuthorize");
 
@@ -276,6 +283,30 @@ router.put(
 );
 router.delete("/carousel-marcas/:id", deleteCarouselMarcasController);
 
-router.get("/stocks/purchase-orders", requireAnyRole(ROLES.ADMIN), getStocksReviewController);
+router.get(
+  "/purchase-orders/generate-preview",
+  requireAnyRole(ROLES.ADMIN),
+  getStocksReviewController
+);
+router.get(
+  "/purchase-orders",
+  requireAnyRole(ROLES.ADMIN),
+  getAllPurchaseOrderController
+);
+router.get(
+  "/purchase-orders/:id",
+  requireAnyRole(ROLES.ADMIN),
+  getByIdPurchaseOrderController
+);
+router.post(
+  "/purchase-orders/generate",
+  requireAnyRole(ROLES.ADMIN),
+  createPurchaseOrderController
+);
+router.put(
+  "/purchase-orders/:id/deliver",
+  requireAnyRole(ROLES.ADMIN),
+  markDeliveredPurchaseOrderController
+);
 
 module.exports = router;

@@ -599,19 +599,29 @@ const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     }
     await OrdenCompra.bulkCreate(ocs, { ignoreDuplicates: true });
 
+    /* =========================
+     *  ITEMS DE ORDEN DE COMPRA
+     * ========================= */
     const itemsOc = [];
     let itemId = 1;
+
     for (let i = 1; i <= 5; i++) {
+      const isDelivered = i >= 4;
+
       for (let k = 0; k < 2; k++) {
         const p = productos[(i + k) % 10];
+        const cant = 5 + k * 5;
+
         itemsOc.push({
           idItemOrdenCompra: itemId++,
           idOrdenCompra: i,
           idProducto: p.idProducto,
-          cantidad: 5 + k * 5,
+          cantidad: cant,
+          cantidadRecibida: isDelivered ? cant : null,
         });
       }
     }
+
     await ItemOrdenCompra.bulkCreate(itemsOc, { ignoreDuplicates: true });
 
     await Pedido.update(
